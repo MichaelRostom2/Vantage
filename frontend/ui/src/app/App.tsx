@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  MapPin, 
-  Search, 
+import {
+  MapPin,
+  Search,
   DollarSign,
   Users,
   ChevronRight,
@@ -52,6 +52,7 @@ import { ScoreBreakdown } from './components/ScoreBreakdown';
 import { CompetitorCard } from './components/CompetitorCard';
 import { RevenueTable } from './components/RevenueTable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
+import { apiService, type LocationResult } from '../services/api';
 
 // Mock data - NYC/Manhattan locations
 const LOCATIONS = [
@@ -179,32 +180,59 @@ export default function SiteSelect() {
     setShowLogin(true);
   };
 
-  const startAnalysis = () => {
+  const startAnalysis = async () => {
     setAppState('loading');
     setLoadingProgress(0);
     setActiveAgent(AGENTS[0].id);
-    
+
+    // Simulate progress for UI feedback
     const interval = setInterval(() => {
       setLoadingProgress(prev => {
         const newProgress = prev + 2;
         if (newProgress >= 100) {
           clearInterval(interval);
-          setTimeout(() => {
-            setAppState('results');
-            setActiveAgent(null);
-          }, 500);
           return 100;
         }
-        
+
         if (newProgress < 20) setActiveAgent(AGENTS[0].id);
         else if (newProgress < 40) setActiveAgent(AGENTS[1].id);
         else if (newProgress < 60) setActiveAgent(AGENTS[2].id);
         else if (newProgress < 80) setActiveAgent(AGENTS[3].id);
         else setActiveAgent(AGENTS[4].id);
-        
+
         return newProgress;
       });
     }, 60);
+
+    try {
+      // Call the API service to submit analysis request
+      const response = await apiService.submitAnalysis({
+        business_type: 'Boba Tea Shop',
+        target_demo: 'Gen Z Students',
+        budget: 8500,
+        location_pref: 'Manhattan',
+      });
+
+      // Wait for progress animation to complete
+      setTimeout(() => {
+        clearInterval(interval);
+        setAppState('results');
+        setActiveAgent(null);
+        // Update locations with real data if available
+        if (response.locations && response.locations.length > 0) {
+          // Locations would be updated here if we had a state for them
+          console.log('Received locations:', response.locations);
+        }
+      }, 4000);
+    } catch (error) {
+      console.error('Analysis failed:', error);
+      // Still show results with mock data on error
+      setTimeout(() => {
+        clearInterval(interval);
+        setAppState('results');
+        setActiveAgent(null);
+      }, 4000);
+    }
   };
 
   const handleMarkerClick = (id: number) => {
@@ -240,10 +268,38 @@ export default function SiteSelect() {
   if (showLogin && !isAuthenticated) {
   return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Animated background layers */}
+        {/* Animated background layers with aurora effect */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute w-96 h-96 bg-[#6366F1] rounded-full blur-3xl opacity-20 animate-pulse" style={{ animation: 'float 20s ease-in-out infinite' }} />
-          <div className="absolute w-96 h-96 bg-[#8B5CF6] rounded-full blur-3xl opacity-20 animate-pulse" style={{ animation: 'float 25s ease-in-out infinite reverse' }} />
+          <motion.div
+            className="absolute w-[600px] h-[600px] bg-[#6366F1] rounded-full blur-3xl opacity-20"
+            animate={{
+              x: [0, 100, 0],
+              y: [0, -100, 0],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ top: '10%', right: '10%' }}
+          />
+          <motion.div
+            className="absolute w-[500px] h-[500px] bg-[#8B5CF6] rounded-full blur-3xl opacity-20"
+            animate={{
+              x: [0, -100, 0],
+              y: [0, 100, 0],
+              scale: [1, 1.3, 1],
+            }}
+            transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ bottom: '10%', left: '10%' }}
+          />
+          <motion.div
+            className="absolute w-[400px] h-[400px] bg-[#EC4899] rounded-full blur-3xl opacity-15"
+            animate={{
+              x: [0, 50, 0],
+              y: [0, -50, 0],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ top: '50%', left: '50%' }}
+          />
         </div>
 
         {/* Login Card */}
@@ -251,63 +307,82 @@ export default function SiteSelect() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
           >
-          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-8 shadow-2xl">
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] rounded-2xl mb-4 shadow-lg">
-                <Target className="w-8 h-8 text-white" />
-              </div>
-              <h1 className="text-3xl font-bold text-white mb-2">SiteSelect</h1>
-              <p className="text-white/70">AI-Powered Retail Site Selection</p>
+          <div className="glass-card-dark premium-glow border-2 border-white/30 rounded-3xl p-10 shadow-2xl liquid-shine relative overflow-hidden">
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 shimmer opacity-30" />
+
+            <div className="text-center mb-10 relative z-10">
+              <motion.div
+                className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#6366F1] via-[#8B5CF6] to-[#EC4899] rounded-2xl mb-5 shadow-2xl neon-glow"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
+                <Target className="w-10 h-10 text-white drop-shadow-lg" />
+              </motion.div>
+              <h1 className="text-4xl font-black text-white mb-3 bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
+                SiteSelect
+              </h1>
+              <p className="text-white/80 font-semibold">AI-Powered Retail Site Selection</p>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-6">
+            <form onSubmit={handleLogin} className="space-y-6 relative z-10">
               <div>
-                <label className="block text-sm font-medium text-white/90 mb-2">Email</label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
+                <label className="block text-sm font-bold text-white/95 mb-3">Email</label>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60 group-focus-within:text-white transition-colors" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
                     required
-                    className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:border-transparent backdrop-blur-sm"
+                    className="w-full pl-12 pr-4 py-4 bg-white/10 border-2 border-white/30 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:border-[#6366F1]/50 backdrop-blur-xl transition-all premium-glow-hover font-semibold"
                   />
         </div>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-white/90 mb-2">Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
-                  <input 
+                <label className="block text-sm font-bold text-white/95 mb-3">Password</label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60 group-focus-within:text-white transition-colors" />
+                  <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     required
-                    className="w-full pl-10 pr-12 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:border-transparent backdrop-blur-sm"
+                    className="w-full pl-12 pr-14 py-4 bg-white/10 border-2 border-white/30 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:border-[#6366F1]/50 backdrop-blur-xl transition-all premium-glow-hover font-semibold"
                   />
-                  <button
+                  <motion.button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
+                  </motion.button>
                 </div>
               </div>
 
-                <button 
+                <motion.button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="w-full py-4 bg-gradient-to-r from-[#6366F1] via-[#8B5CF6] to-[#EC4899] text-white rounded-2xl font-black text-lg shadow-2xl hover:shadow-3xl neon-glow-hover transition-all relative overflow-hidden"
                 >
-                Sign In
-                </button>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                    animate={{ x: ['-100%', '200%'] }}
+                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                  />
+                  <span className="relative z-10">Sign In</span>
+                </motion.button>
 
-              <div className="text-center">
-                <a href="#" className="text-sm text-white/70 hover:text-white transition-colors">
+              <div className="text-center pt-2">
+                <a href="#" className="text-sm text-white/80 hover:text-white transition-colors font-semibold hover:underline">
                   Forgot password?
                 </a>
               </div>
@@ -338,24 +413,36 @@ export default function SiteSelect() {
       {/* Collapsible Sidebar */}
       <aside
         style={{ width: sidebarCollapsed ? 80 : 280 }}
-        className="relative z-30 glass-card border-r border-white/30 shadow-2xl flex flex-col transition-all duration-300"
+        className="relative z-30 glass-card premium-glow border-r-2 border-white/40 shadow-2xl flex flex-col transition-all duration-300 liquid-shine"
       >
         {/* Sidebar Header */}
-        <div className="p-6 border-b border-[#E5E7EB]/50 flex items-center justify-between">
+        <div className="p-6 border-b-2 border-white/30 flex items-center justify-between">
           {!sidebarCollapsed && (
-            <div className="flex items-center gap-3 animate-in fade-in duration-300">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] rounded-xl flex items-center justify-center shadow-lg">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-lg font-bold text-slate-900">SiteSelect</span>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-3"
+            >
+              <motion.div
+                className="w-12 h-12 bg-gradient-to-br from-[#6366F1] via-[#8B5CF6] to-[#EC4899] rounded-2xl flex items-center justify-center shadow-xl neon-glow"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
+                <Target className="w-7 h-7 text-white drop-shadow-lg" />
+              </motion.div>
+              <span className="text-xl font-black text-slate-900 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                SiteSelect
+              </span>
+            </motion.div>
           )}
-          <button
+          <motion.button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="p-2.5 hover:bg-gradient-to-br hover:from-[#6366F1]/10 hover:to-[#8B5CF6]/10 rounded-xl transition-all"
           >
-            <ChevronLeft className={`w-5 h-5 text-slate-600 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
-          </button>
+            <ChevronLeft className={`w-5 h-5 text-slate-600 transition-transform duration-300 ${sidebarCollapsed ? 'rotate-180' : ''}`} />
+          </motion.button>
         </div>
 
         {/* Navigation */}
@@ -364,64 +451,105 @@ export default function SiteSelect() {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
-              <button
+              <motion.button
                 key={item.id}
                 onClick={() => setActiveTab(item.id as ActiveTab)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                whileHover={{ scale: 1.03, x: 4 }}
+                whileTap={{ scale: 0.97 }}
+                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all font-bold relative overflow-hidden ${
                   isActive
-                    ? 'bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white shadow-lg'
-                    : 'text-slate-700 hover:bg-slate-100'
+                    ? 'bg-gradient-to-r from-[#6366F1] via-[#8B5CF6] to-[#EC4899] text-white shadow-xl neon-glow'
+                    : 'text-slate-700 hover:bg-gradient-to-br hover:from-slate-100 hover:to-slate-50 hover:shadow-md'
                 }`}
               >
-                <Icon className="w-5 h-5 flex-shrink-0" />
-                {!sidebarCollapsed && (
-                  <span className="font-medium animate-in fade-in duration-300">
-                    {item.label}
-                  </span>
+                {isActive && (
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                    animate={{ x: ['-100%', '200%'] }}
+                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                  />
                 )}
-              </button>
+                <Icon className="w-5 h-5 flex-shrink-0 relative z-10" />
+                {!sidebarCollapsed && (
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="relative z-10"
+                  >
+                    {item.label}
+                  </motion.span>
+                )}
+              </motion.button>
             );
           })}
         </nav>
 
         {/* User Section */}
-        <div className="p-4 border-t border-[#E5E7EB]/50">
+        <div className="p-4 border-t-2 border-white/30">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] rounded-full flex items-center justify-center text-white font-semibold">
+            <motion.div
+              className="w-12 h-12 bg-gradient-to-br from-[#6366F1] via-[#8B5CF6] to-[#EC4899] rounded-2xl flex items-center justify-center text-white font-black shadow-lg neon-glow"
+              whileHover={{ scale: 1.1, rotate: 5 }}
+            >
               {!sidebarCollapsed ? 'JD' : 'J'}
-            </div>
+            </motion.div>
             {!sidebarCollapsed && (
-              <div className="flex-1 animate-in fade-in duration-300">
-                <p className="text-sm font-semibold text-slate-900">John Doe</p>
-                <p className="text-xs text-slate-500">john@example.com</p>
-              </div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex-1"
+              >
+                <p className="text-sm font-bold text-slate-900">John Doe</p>
+                <p className="text-xs text-slate-600 font-semibold">john@example.com</p>
+              </motion.div>
             )}
           </div>
-          <button
+          <motion.button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+            whileHover={{ scale: 1.03, x: 4 }}
+            whileTap={{ scale: 0.97 }}
+            className="w-full flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-gradient-to-br hover:from-red-50 hover:to-orange-50 rounded-2xl transition-all font-bold hover:text-red-600"
           >
             <LogOut className="w-5 h-5" />
-            {!sidebarCollapsed && <span className="font-medium">Logout</span>}
-          </button>
+            {!sidebarCollapsed && <span>Logout</span>}
+          </motion.button>
         </div>
       </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col relative z-10">
         {/* Top Navigation Bar */}
-        <header className="sticky top-0 z-20 glass-card border-b border-white/30 h-16 flex items-center justify-between px-8">
+        <header className="sticky top-0 z-20 glass-card premium-glow border-b-2 border-white/40 h-20 flex items-center justify-between px-8 liquid-shine">
           <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold text-slate-900 capitalize">{activeTab}</h2>
+            <motion.h2
+              key={activeTab}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-2xl font-black text-slate-900 capitalize bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent"
+            >
+              {activeTab}
+            </motion.h2>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors relative">
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-3 hover:bg-gradient-to-br hover:from-[#6366F1]/10 hover:to-[#8B5CF6]/10 rounded-2xl transition-all relative"
+            >
               <Bell className="w-5 h-5 text-slate-600" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-[#EF4444] rounded-full" />
-            </button>
-            <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+              <motion.span
+                className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#EF4444] rounded-full"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-3 hover:bg-gradient-to-br hover:from-[#6366F1]/10 hover:to-[#8B5CF6]/10 rounded-2xl transition-all"
+            >
               <HelpCircle className="w-5 h-5 text-slate-600" />
-            </button>
+            </motion.button>
           </div>
         </header>
 
@@ -445,16 +573,26 @@ export default function SiteSelect() {
               exit={{ opacity: 0, y: -20 }}
             >
               <div className="max-w-4xl mx-auto space-y-8">
-                      <div className="text-center space-y-4 py-12">
-                        <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] bg-clip-text text-transparent">
+                      <motion.div
+                        className="text-center space-y-4 py-12"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <h1 className="text-5xl font-black tracking-tight bg-gradient-to-r from-[#6366F1] via-[#8B5CF6] to-[#EC4899] bg-clip-text text-transparent drop-shadow-lg">
                           AI-Powered Retail Site Selection
                         </h1>
-                        <p className="text-lg text-slate-600">Find the perfect location for your business in Manhattan</p>
-              </div>
-              
-                <div className="glass-card rounded-3xl p-8 premium-glow">
+                        <p className="text-xl text-slate-700 font-semibold">Find the perfect location for your business in Manhattan</p>
+              </motion.div>
+
+                <motion.div
+                  className="glass-card rounded-3xl p-10 premium-glow liquid-shine"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
                   <InputForm onAnalyze={startAnalysis} isAnalyzing={false} />
-              </div>
+              </motion.div>
               </div>
             </motion.div>
           )}

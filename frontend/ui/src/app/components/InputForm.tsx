@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, MapPin, Users, DollarSign, Zap } from 'lucide-react';
+import { Search, MapPin, Users, DollarSign, Zap, ChevronRight } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface InputFormProps {
@@ -14,89 +14,127 @@ export const InputForm: React.FC<InputFormProps> = ({ onAnalyze, isAnalyzing }) 
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-          <Search className="w-4 h-4 text-[#6366F1]" />
+      <div className="space-y-3">
+        <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] flex items-center justify-center">
+            <Search className="w-4 h-4 text-white" />
+          </div>
           Business Type
         </label>
-        <select
-          value={businessType}
-          onChange={(e) => setBusinessType(e.target.value)}
-          className="w-full glass-card border border-white/30 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#6366F1]/50 focus:border-transparent appearance-none cursor-pointer hover:border-[#6366F1]/50 transition-all premium-glow-hover"
-        >
-          <option>Boba Tea Shop</option>
-          <option>Coffee Roastery</option>
-          <option>Craft Cocktail Bar</option>
-          <option>Boutique Fitness</option>
-          <option>Specialty Bakery</option>
-          <option>Fast Casual Restaurant</option>
-        </select>
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-          <Users className="w-4 h-4 text-[#6366F1]" />
-          Target Demographic
-        </label>
-        <select
-          value={targetDemo}
-          onChange={(e) => setTargetDemo(e.target.value)}
-          className="w-full glass-card border border-white/30 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#6366F1]/50 focus:border-transparent appearance-none cursor-pointer hover:border-[#6366F1]/50 transition-all premium-glow-hover"
-        >
-          <option>Gen Z Students</option>
-          <option>Young Professionals</option>
-          <option>High-Net Worth Families</option>
-          <option>Digital Nomads</option>
-          <option>Retirees</option>
-        </select>
+        <div className="relative group">
+          <select
+            value={businessType}
+            onChange={(e) => setBusinessType(e.target.value)}
+            className="w-full glass-card border-2 border-white/40 rounded-2xl px-5 py-4 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:border-[#6366F1]/50 appearance-none cursor-pointer hover:border-[#6366F1]/60 transition-all premium-glow-hover backdrop-blur-xl"
+          >
+            <option>Boba Tea Shop</option>
+            <option>Coffee Roastery</option>
+            <option>Craft Cocktail Bar</option>
+            <option>Boutique Fitness</option>
+            <option>Specialty Bakery</option>
+            <option>Fast Casual Restaurant</option>
+          </select>
+          <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none rotate-90" />
+        </div>
       </div>
 
       <div className="space-y-3">
-        <div className="flex justify-between items-center">
-          <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-            <DollarSign className="w-4 h-4 text-[#6366F1]" />
-            Monthly Budget
-          </label>
-          <span className="text-lg font-bold text-[#6366F1]">${budget.toLocaleString()}</span>
-        </div>
-        <input
-          type="range"
-          min="2000"
-          max="15000"
-          step="500"
-          value={budget}
-          onChange={(e) => setBudget(Number(e.target.value))}
-          className="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer accent-[#6366F1]"
-          style={{
-            background: `linear-gradient(to right, #6366F1 0%, #6366F1 ${((budget - 2000) / (15000 - 2000)) * 100}%, #E5E7EB ${((budget - 2000) / (15000 - 2000)) * 100}%, #E5E7EB 100%)`
-          }}
-        />
-        <div className="flex justify-between text-xs font-medium text-slate-500">
-          <span>$2k</span>
-          <span>$15k</span>
+        <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] flex items-center justify-center">
+            <Users className="w-4 h-4 text-white" />
+          </div>
+          Target Demographic
+        </label>
+        <div className="relative group">
+          <select
+            value={targetDemo}
+            onChange={(e) => setTargetDemo(e.target.value)}
+            className="w-full glass-card border-2 border-white/40 rounded-2xl px-5 py-4 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:border-[#8B5CF6]/50 appearance-none cursor-pointer hover:border-[#8B5CF6]/60 transition-all premium-glow-hover backdrop-blur-xl"
+          >
+            <option>Gen Z Students</option>
+            <option>Young Professionals</option>
+            <option>High-Net Worth Families</option>
+            <option>Digital Nomads</option>
+            <option>Retirees</option>
+          </select>
+          <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none rotate-90" />
         </div>
       </div>
 
-        <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#10B981] to-emerald-500 flex items-center justify-center">
+              <DollarSign className="w-4 h-4 text-white" />
+            </div>
+            Monthly Budget
+          </label>
+          <motion.div
+            key={budget}
+            initial={{ scale: 1.2, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="px-4 py-2 bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] rounded-xl"
+          >
+            <span className="text-lg font-black text-white">${budget.toLocaleString()}</span>
+          </motion.div>
+        </div>
+        <div className="relative">
+          <input
+            type="range"
+            min="2000"
+            max="15000"
+            step="500"
+            value={budget}
+            onChange={(e) => setBudget(Number(e.target.value))}
+            className="w-full h-3 rounded-full appearance-none cursor-pointer"
+            style={{
+              background: `linear-gradient(to right,
+                #6366F1 0%,
+                #8B5CF6 ${((budget - 2000) / (15000 - 2000)) * 50}%,
+                #EC4899 ${((budget - 2000) / (15000 - 2000)) * 100}%,
+                rgba(226, 232, 240, 0.5) ${((budget - 2000) / (15000 - 2000)) * 100}%,
+                rgba(226, 232, 240, 0.5) 100%)`,
+            }}
+          />
+          <div className="flex justify-between mt-2 text-xs font-bold text-slate-500">
+            <span>$2k</span>
+            <span className="text-slate-400">Budget Range</span>
+            <span>$15k</span>
+          </div>
+        </div>
+      </div>
+
+      <motion.button
+        whileHover={{ scale: 1.03, y: -2 }}
+        whileTap={{ scale: 0.97 }}
         onClick={onAnalyze}
         disabled={isAnalyzing}
-        className={`w-full py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all ${
+        className={`w-full py-5 rounded-2xl font-black text-base flex items-center justify-center gap-3 transition-all relative overflow-hidden ${
           isAnalyzing
-            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-            : 'bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white shadow-xl shadow-[#6366F1]/40 hover:shadow-2xl hover:shadow-[#6366F1]/50'
+            ? 'bg-gradient-to-r from-slate-200 to-slate-300 text-slate-400 cursor-not-allowed'
+            : 'bg-gradient-to-r from-[#6366F1] via-[#8B5CF6] to-[#EC4899] text-white shadow-2xl shadow-[#6366F1]/50 hover:shadow-3xl hover:shadow-[#6366F1]/70 neon-glow-hover'
         }`}
       >
+        {!isAnalyzing && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            animate={{ x: ['-100%', '200%'] }}
+            transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+          />
+        )}
         {isAnalyzing ? (
           <>
-            <div className="w-5 h-5 border-2 border-slate-300 border-t-transparent rounded-full animate-spin" />
-            Processing...
+            <motion.div
+              className="w-6 h-6 border-3 border-slate-400 border-t-transparent rounded-full"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+            />
+            <span>Processing...</span>
           </>
         ) : (
           <>
-            <Zap className="w-5 h-5" />
-            Find Locations
+            <Zap className="w-6 h-6" />
+            <span>Find Perfect Locations</span>
           </>
         )}
       </motion.button>

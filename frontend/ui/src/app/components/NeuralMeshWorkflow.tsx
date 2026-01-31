@@ -35,18 +35,29 @@ export const NeuralMeshWorkflow: React.FC<NeuralMeshWorkflowProps> = ({ agents, 
   };
 
   return (
-    <div className="relative w-full h-[500px] glass-card-dark rounded-2xl overflow-hidden premium-glow">
-      {/* Grid Background */}
-      <div 
-        className="absolute inset-0 opacity-20"
+    <div className="relative w-full h-[500px] glass-card-dark rounded-2xl overflow-hidden premium-glow liquid-shine">
+      {/* Animated Grid Background */}
+      <motion.div
+        className="absolute inset-0 opacity-30"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+            linear-gradient(rgba(99, 102, 241, 0.15) 1.5px, transparent 1.5px),
+            linear-gradient(90deg, rgba(139, 92, 246, 0.15) 1.5px, transparent 1.5px)
           `,
           backgroundSize: '40px 40px'
         }}
+        animate={{
+          backgroundPosition: ['0px 0px', '40px 40px'],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: 'linear',
+        }}
       />
+
+      {/* Aurora Background Effect */}
+      <div className="absolute inset-0 aurora-effect opacity-40" />
 
       {/* Agent Nodes */}
       {agents.map((agent, index) => {
@@ -102,35 +113,74 @@ export const NeuralMeshWorkflow: React.FC<NeuralMeshWorkflowProps> = ({ agents, 
                 top: `${agent.position.y}%`,
                 transform: 'translate(-50%, -50%)',
               }}
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.1 }}
+              animate={{
+                y: agent.status === 'active' ? [-2, 2, -2] : 0,
+              }}
+              transition={{
+                y: {
+                  duration: 2,
+                  repeat: agent.status === 'active' ? Infinity : 0,
+                  ease: 'easeInOut',
+                },
+              }}
             >
               <div
                 className={`
-                  relative w-20 h-20 rounded-xl border-2 flex flex-col items-center justify-center
-                  transition-all duration-300 cursor-pointer
+                  relative w-24 h-24 rounded-2xl border-2 flex flex-col items-center justify-center
+                  transition-all duration-500 cursor-pointer backdrop-blur-xl
                   ${getStatusGlow(agent.status)}
                 `}
                 style={{
-                  backgroundColor: agent.status === 'done' ? '#10B981' : 
-                                 agent.status === 'active' ? '#6366F1' : '#1F2937',
+                  background: agent.status === 'done'
+                    ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(5, 150, 105, 0.9))'
+                    : agent.status === 'active'
+                    ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(139, 92, 246, 0.9))'
+                    : 'linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(17, 24, 39, 0.8))',
                   borderColor: getStatusColor(agent.status),
+                  boxShadow: agent.status === 'active'
+                    ? '0 0 30px rgba(99, 102, 241, 0.6), 0 0 60px rgba(139, 92, 246, 0.4)'
+                    : agent.status === 'done'
+                    ? '0 0 20px rgba(16, 185, 129, 0.5)'
+                    : 'none',
                 }}
               >
                 {agent.status === 'done' ? (
-                  <CheckCircle2 className="w-8 h-8 text-white" />
+                  <CheckCircle2 className="w-10 h-10 text-white drop-shadow-lg" />
                 ) : agent.status === 'active' ? (
-                  <Loader2 className="w-8 h-8 text-white animate-spin" />
+                  <Loader2 className="w-10 h-10 text-white animate-spin drop-shadow-lg" />
                 ) : (
-                  <Icon className="w-8 h-8 text-slate-400" />
+                  <Icon className="w-10 h-10 text-slate-400" />
                 )}
-                
+
                 {/* Pulse effect for active */}
                 {agent.status === 'active' && (
+                  <>
+                    <motion.div
+                      className="absolute inset-0 rounded-2xl"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.4))',
+                      }}
+                      animate={{ opacity: [0.3, 0.7, 0.3], scale: [1, 1.15, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+                    <motion.div
+                      className="absolute -inset-4 rounded-2xl"
+                      style={{
+                        background: 'radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%)',
+                      }}
+                      animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+                  </>
+                )}
+
+                {/* Shine effect for done */}
+                {agent.status === 'done' && (
                   <motion.div
-                    className="absolute inset-0 rounded-xl"
-                    style={{ backgroundColor: '#6366F1' }}
-                    animate={{ opacity: [0.5, 0.8, 0.5], scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute inset-0 rounded-2xl shimmer"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                   />
                 )}
               </div>
@@ -152,26 +202,43 @@ export const NeuralMeshWorkflow: React.FC<NeuralMeshWorkflowProps> = ({ agents, 
       })}
 
       {/* Control Panel */}
-      <div className="absolute bottom-4 left-4 right-4 glass-card-dark rounded-xl p-4 border border-white/10">
+      <motion.div
+        className="absolute bottom-6 left-6 right-6 glass-card-dark rounded-2xl p-5 border border-white/20 premium-glow"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.3 }}
+      >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-              <span className="text-xs font-semibold text-slate-300">Neural Mesh Active</span>
+              <motion.div
+                className="w-2.5 h-2.5 rounded-full bg-[#10B981]"
+                animate={{
+                  scale: [1, 1.3, 1],
+                  opacity: [1, 0.6, 1],
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              <span className="text-sm font-bold text-white">Neural Mesh Active</span>
             </div>
-            <span className="text-xs text-slate-500">4 PARALLEL EXECUTION</span>
+            <div className="h-4 w-px bg-white/20" />
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              5 PARALLEL AGENTS
+            </span>
           </div>
           {onRun && (
-            <button
+            <motion.button
               onClick={onRun}
-              className="px-4 py-2 bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] text-white rounded-lg text-xs font-semibold hover:shadow-lg hover:shadow-[#6366F1]/50 transition-all flex items-center gap-2"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-5 py-2.5 bg-gradient-to-r from-[#6366F1] via-[#8B5CF6] to-[#EC4899] text-white rounded-xl text-xs font-bold shadow-lg hover:shadow-2xl hover:shadow-[#6366F1]/60 transition-all flex items-center gap-2 neon-glow-hover"
             >
-              <Play className="w-3 h-3" />
-              RE-RUN NEURAL MESH
-            </button>
+              <Play className="w-4 h-4" />
+              RE-RUN ANALYSIS
+            </motion.button>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
