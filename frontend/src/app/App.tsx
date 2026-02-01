@@ -159,7 +159,8 @@ function listingsToLocations(listings: RentCastListing[]): typeof FALLBACK_LOCAT
 
 // Fallback mock data - NYC/Manhattan locations
 const FALLBACK_LOCATIONS = [
-  { id: 1, name: '401 W 25th St', score: 98, x: 35, y: 45, status: 'HIGH' as const,
+  {
+    id: 1, name: '401 W 25th St', score: 98, x: 35, y: 45, status: 'HIGH' as const,
     address: '401 W 25th St, Apt 3B, New York, NY 10001', rent_price: 4200, sqft: 1100, lat: 40.7490, lng: -74.0015, propertyType: 'Apartment', bedrooms: 2, bathrooms: 1,
     metrics: [
       { label: 'Elite Density', score: 98, confidence: 'HIGH' as const },
@@ -186,7 +187,8 @@ const FALLBACK_LOCATIONS = [
       { text: 'Schedule site visit with realtor', completed: false }
     ]
   },
-  { id: 2, name: '82 Reade St', score: 89, x: 60, y: 55, status: 'HIGH' as const,
+  {
+    id: 2, name: '82 Reade St', score: 89, x: 60, y: 55, status: 'HIGH' as const,
     address: '82 Reade St, Apt 7A, New York, NY 10007', rent_price: 5500, sqft: 1350, lat: 40.7148, lng: -74.0064, propertyType: 'Loft', bedrooms: 2, bathrooms: 2,
     metrics: [
       { label: 'Elite Density', score: 92, confidence: 'HIGH' as const },
@@ -212,7 +214,8 @@ const FALLBACK_LOCATIONS = [
       { text: 'Schedule site visit with realtor', completed: false }
     ]
   },
-  { id: 3, name: '145 Spring St', score: 87, x: 50, y: 70, status: 'HIGH' as const,
+  {
+    id: 3, name: '145 Spring St', score: 87, x: 50, y: 70, status: 'HIGH' as const,
     address: '145 Spring St, Unit 2, New York, NY 10012', rent_price: 6800, sqft: 1500, lat: 40.7246, lng: -74.0012, propertyType: 'Retail', bedrooms: 0, bathrooms: 1,
     metrics: [
       { label: 'Elite Density', score: 94, confidence: 'HIGH' as const },
@@ -456,86 +459,86 @@ export default function Vantage() {
 
   // Login Modal
   if (showLogin && !isAuthenticated) {
-  return (
+    return (
       <div className="min-h-screen bg-gradient-to-br from-teal-50 via-slate-50 to-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
         <SimpleBackground />
 
         {/* Login Card */}
         <div className="relative z-10 w-full max-w-md">
-                <MotionDiv
+          <MotionDiv
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
           >
-          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-10 shadow-lg">
-            <div className="text-center mb-10">
-              <img src="/logo.png" alt="Vantage" className="w-16 h-16 rounded-xl mb-5 mx-auto shadow-lg" />
-              <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-2">
-                VANTAGE
-              </h1>
-              <p className="text-slate-600 dark:text-slate-300 font-medium">Location Intelligence Platform</p>
+            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-10 shadow-lg">
+              <div className="text-center mb-10">
+                <img src="../logo.png" alt="Vantage" className="w-16 h-16 rounded-xl mb-5 mx-auto shadow-lg" />
+                <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-2">
+                  VANTAGE
+                </h1>
+                <p className="text-slate-600 dark:text-slate-300 font-medium">Location Intelligence Platform</p>
               </div>
 
-            <form onSubmit={handleLogin} className="space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Email</label>
-                <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-teal-500 dark:group-focus-within:text-teal-400 transition-colors" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    required
-                    className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
-                  />
+              <form onSubmit={handleLogin} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Email</label>
+                  <div className="relative group">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-teal-500 dark:group-focus-within:text-teal-400 transition-colors" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      required
+                      className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
+                    />
                   </div>
                 </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Password</label>
-                <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-teal-500 dark:group-focus-within:text-teal-400 transition-colors" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    required
-                    className="w-full pl-12 pr-14 py-3 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                    </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Password</label>
+                  <div className="relative group">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-teal-500 dark:group-focus-within:text-teal-400 transition-colors" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                      className="w-full pl-12 pr-14 py-3 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
                   </div>
+                </div>
 
                 <MotionButton
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full py-3 bg-gradient-to-r from-teal-500 to-emerald-600 text-white rounded-xl font-semibold text-base shadow-sm hover:shadow-md hover:from-teal-600 hover:to-emerald-700 transition-all"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleLogin(e);
-                }}
-              >
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full py-3 bg-gradient-to-r from-teal-500 to-emerald-600 text-white rounded-xl font-semibold text-base shadow-sm hover:shadow-md hover:from-teal-600 hover:to-emerald-700 transition-all"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleLogin(e);
+                  }}
+                >
                   Sign In →
                 </MotionButton>
 
-              <div className="text-center pt-2">
-                <a href="#" className="text-sm text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors font-medium hover:underline">
-                  Forgot password?
-                </a>
-                    </div>
-            </form>
-                  </div>
+                <div className="text-center pt-2">
+                  <a href="#" className="text-sm text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors font-medium hover:underline">
+                    Forgot password?
+                  </a>
+                </div>
+              </form>
+            </div>
           </MotionDiv>
-                    </div>
-                  </div>
+        </div>
+      </div>
     );
   }
 
@@ -545,13 +548,13 @@ export default function Vantage() {
 
       {/* Fixed Icon Sidebar */}
       <aside className="fixed left-0 top-0 bottom-0 w-20 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col items-center py-8 z-50">
-            <MotionDiv
+        <MotionDiv
           className="w-12 h-12 flex items-center justify-center mb-12"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-          <img src="/logo.png" alt="Vantage" className="w-12 h-12 object-cover" />
-              </MotionDiv>
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          transition={{ type: 'spring', stiffness: 300 }}
+        >
+          <img src="../logo.png" alt="Vantage" className="w-12 h-12 object-cover" />
+        </MotionDiv>
 
         <nav className="flex flex-col gap-8">
           {[
@@ -569,11 +572,10 @@ export default function Vantage() {
                 onClick={() => setActiveTab(item.id as ActiveTab)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className={`p-3 rounded-xl transition-all relative group ${
-                  isActive
-                    ? 'bg-teal-100 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 shadow-sm'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'
-                }`}
+                className={`p-3 rounded-xl transition-all relative group ${isActive
+                  ? 'bg-teal-100 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 shadow-sm'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'
+                  }`}
               >
                 <Icon className="w-6 h-6" />
                 <div className="absolute left-full ml-4 px-2 py-1 bg-slate-900 dark:bg-slate-800 text-white text-[10px] font-bold uppercase rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-[100] border border-slate-700 dark:border-slate-600 shadow-lg">
@@ -584,14 +586,14 @@ export default function Vantage() {
           })}
         </nav>
 
-          <MotionButton
+        <MotionButton
           className="mt-auto p-3 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-            onClick={handleLogout}
-          >
+          onClick={handleLogout}
+        >
           <LogOut className="w-6 h-6" />
-          </MotionButton>
+        </MotionButton>
       </aside>
 
       {/* Main Content */}
@@ -602,7 +604,7 @@ export default function Vantage() {
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">MANHATTAN DISTRICT</span>
-          </div>
+              </div>
               <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight break-words">
                 {appState === 'initial' ? 'Welcome to Vantage' : 'Location Intelligence'}
               </h1>
@@ -614,15 +616,15 @@ export default function Vantage() {
             </div>
 
             <div className="flex gap-4">
-            <MotionButton
+              <MotionButton
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm"
               >
                 <Search className="w-4 h-4" />
                 History
-            </MotionButton>
-            <MotionButton
+              </MotionButton>
+              <MotionButton
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setAppState('initial')}
@@ -630,38 +632,38 @@ export default function Vantage() {
               >
                 <Plus className="w-4 h-4" />
                 New Analysis
-            </MotionButton>
-          </div>
-        </header>
+              </MotionButton>
+            </div>
+          </header>
         )}
 
         {/* Navigation Router View */}
         {activeTab === 'analytics' ? (
-              <MotionDiv
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
             <AnalyticsDashboard />
           </MotionDiv>
         ) : activeTab === 'reports' ? (
-            <MotionDiv
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
-            >
+          >
             <ReportsTab />
           </MotionDiv>
         ) : activeTab === 'settings' ? (
-                      <MotionDiv
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
-                      >
+          >
             <SettingsTab />
-              </MotionDiv>
+          </MotionDiv>
         ) : activeTab === 'locations' ? (
-                <MotionDiv
+          <MotionDiv
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
@@ -672,8 +674,8 @@ export default function Vantage() {
                 {locations.map((location) => (
                   <MotionDiv
                     key={location.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
                     onClick={() => {
                       setSelectedLocation(location.id);
                       setActiveTab('dashboard');
@@ -683,13 +685,12 @@ export default function Vantage() {
                   >
                     <div className="flex items-center justify-between mb-4 gap-2">
                       <h3 className="text-lg font-black text-slate-900 dark:text-white truncate flex-1 min-w-0">{location.name}</h3>
-                      <div className={`px-3 py-1 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
-                        location.status === 'HIGH' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' :
+                      <div className={`px-3 py-1 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${location.status === 'HIGH' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' :
                         location.status === 'MEDIUM' ? 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400' :
-                        'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400'
-                      }`}>
+                          'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400'
+                        }`}>
                         {location.status}
-              </div>
+                      </div>
                     </div>
                     <div className="flex items-baseline gap-3 mb-2">
                       <span className="text-4xl font-black text-teal-600 dark:text-teal-400">{location.score}/100</span>
@@ -706,7 +707,7 @@ export default function Vantage() {
                       {location.bedrooms ? `${location.bedrooms}BR` : ''}
                       {!location.sqft && !location.bedrooms ? 'Click to view detailed analysis' : ''}
                     </p>
-            <MotionDiv
+                    <MotionDiv
                       whileHover={{ x: 4 }}
                       className="flex items-center gap-2 text-xs font-bold text-teal-600 dark:text-teal-400 whitespace-nowrap"
                     >
@@ -715,22 +716,22 @@ export default function Vantage() {
                     </MotionDiv>
                   </MotionDiv>
                 ))}
-                </div>
-                </div>
-                    </MotionDiv>
+              </div>
+            </div>
+          </MotionDiv>
         ) : (
-            <MotionDiv
-                key="dashboard"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
+          <MotionDiv
+            key="dashboard"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
             className="grid grid-cols-12 gap-6 lg:gap-8"
-              >
+          >
             {/* Left Column: Form / Pipeline */}
             <div className="col-span-12 lg:col-span-4 xl:col-span-3 space-y-6 lg:space-y-8">
-        <AnimatePresence mode="wait">
+              <AnimatePresence mode="wait">
                 {appState === 'initial' ? (
-            <MotionDiv
+                  <MotionDiv
                     key="form"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -739,20 +740,20 @@ export default function Vantage() {
                     <InputForm onAnalyze={startAnalysis} isAnalyzing={false} />
                     <div className="mt-6 flex items-center justify-center gap-2 text-[10px] font-bold text-slate-400 uppercase">
                       Press <kbd className="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700">⌘ Enter</kbd> to analyze
-                        </div>
+                    </div>
                   </MotionDiv>
                 ) : (
-                      <MotionDiv
+                  <MotionDiv
                     key="pipeline"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     className="space-y-6"
                   >
                     <LinearPipeline
-                              agents={AGENTS.map((agent, idx) => ({
-                                name: agent.name,
-                                status: activeAgent === agent.id ? 'active' :
-                               AGENTS.findIndex(a => a.id === activeAgent) > idx ? 'done' : 'pending',
+                      agents={AGENTS.map((agent, idx) => ({
+                        name: agent.name,
+                        status: activeAgent === agent.id ? 'active' :
+                          AGENTS.findIndex(a => a.id === activeAgent) > idx ? 'done' : 'pending',
                         time: activeAgent === agent.id ? 'Running...' : undefined
                       }))}
                     />
@@ -777,25 +778,25 @@ export default function Vantage() {
                           >
                             <FileText className="w-4 h-4" />
                             Download Full Report
-                                </button>
-                          </div>
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-teal-400/10 to-emerald-500/10 blur-3xl rounded-full translate-x-10 -translate-y-10" />
+                          </button>
                         </div>
-                        )}
-            </MotionDiv>
-          )}
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-teal-400/10 to-emerald-500/10 blur-3xl rounded-full translate-x-10 -translate-y-10" />
+                      </div>
+                    )}
+                  </MotionDiv>
+                )}
               </AnimatePresence>
-                          </div>
+            </div>
 
             {/* Right Column: Results / Visualization - Full Width */}
             <div className="col-span-12 lg:col-span-8 xl:col-span-9 space-y-6 lg:space-y-8">
               <AnimatePresence mode="wait">
                 {appState === 'initial' ? (
-            <MotionDiv
+                  <MotionDiv
                     key="initial-view"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
                     className="h-[600px] relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-700"
                   >
                     <SimpleBackground />
@@ -805,13 +806,13 @@ export default function Vantage() {
                         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                         className="w-20 h-20 bg-teal-500/20 dark:bg-teal-500/10 backdrop-blur-xl rounded-3xl border border-teal-400/40 dark:border-teal-500/30 flex items-center justify-center mb-6 shadow-2xl"
                       >
-                        <img src="/logo.png" alt="Vantage" className="w-12 h-12 rounded-lg" />
+                        <img src="../logo.png" alt="Vantage" className="w-12 h-12 rounded-lg" />
                       </MotionDiv>
                       <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4 tracking-tighter uppercase">Enter the Vantage Point</h2>
                       <p className="text-slate-700 dark:text-slate-200 max-w-md mx-auto leading-relaxed">
                         Analyze thousands of data points in seconds with our multi-agent intelligence layer. Trusted by Fortune 500 retail chains.
                       </p>
-                          </div>
+                    </div>
                   </MotionDiv>
                 ) : appState === 'loading' ? (
                   <MotionDiv
@@ -822,16 +823,16 @@ export default function Vantage() {
                   >
                     <div className="col-span-full h-[400px]">
                       <LocationCardSkeleton />
-                        </div>
+                    </div>
                     {[1, 2, 3].map(i => (
                       <LocationCardSkeleton key={i} />
                     ))}
-                    </MotionDiv>
+                  </MotionDiv>
                 ) : (
-            <MotionDiv
+                  <MotionDiv
                     key="results-view"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     className="space-y-6"
                   >
                     {/* Map - Full Width with popup detail sidebar built-in */}
@@ -989,10 +990,10 @@ export default function Vantage() {
                     </MotionDiv>
 
                     {/* Deep Analysis Tabs */}
-                          {selectedLocationData && (
-                            <MotionDiv
+                    {selectedLocationData && (
+                      <MotionDiv
                         initial={{ opacity: 0, y: 40 }}
-                              animate={{ opacity: 1, y: 0 }}
+                        animate={{ opacity: 1, y: 0 }}
                         className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl overflow-hidden shadow-sm"
                       >
                         <div className="flex border-b border-slate-200 dark:border-slate-700 overflow-x-auto no-scrollbar gap-1">
@@ -1009,11 +1010,10 @@ export default function Vantage() {
                               onClick={() => setDetailTab(tab.id as DetailTab)}
                               whileHover={{ y: -2 }}
                               whileTap={{ scale: 0.95 }}
-                              className={`flex items-center gap-2 px-5 py-4 text-sm font-bold transition-all relative whitespace-nowrap flex-shrink-0 ${
-                                detailTab === tab.id
-                                  ? 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10'
-                                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50'
-                              }`}
+                              className={`flex items-center gap-2 px-5 py-4 text-sm font-bold transition-all relative whitespace-nowrap flex-shrink-0 ${detailTab === tab.id
+                                ? 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10'
+                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                                }`}
                             >
                               <tab.icon className="w-4 h-4 flex-shrink-0" />
                               <span className="truncate max-w-[120px]">{tab.label}</span>
@@ -1022,7 +1022,7 @@ export default function Vantage() {
                               )}
                             </MotionButton>
                           ))}
-                      </div>
+                        </div>
 
                         <div className="p-8">
                           <AnimatePresence mode="wait">
@@ -1043,13 +1043,13 @@ export default function Vantage() {
                                     <div className="p-4 bg-slate-50 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
                                       <div className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase mb-1 break-words">Catchment Area</div>
                                       <div className="text-lg font-black text-slate-900 dark:text-white break-words">2.4mi Radius</div>
-                            </div>
+                                    </div>
                                     <div className="p-4 bg-slate-50 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
                                       <div className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase mb-1 break-words">Avg. Disposable Income</div>
                                       <div className="text-lg font-black text-slate-900 dark:text-white break-words">$4.2k/mo</div>
-                          </div>
-                        </div>
-                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                                 <div className="bg-gradient-to-br from-teal-50 to-emerald-100/50 dark:bg-teal-500/10 p-6 rounded-2xl border border-teal-200 dark:border-teal-500/30">
                                   <h4 className="text-sm font-black text-teal-700 dark:text-teal-400 mb-4 uppercase tracking-widest break-words">Growth Forecast</h4>
                                   <div className="space-y-4">
@@ -1059,12 +1059,12 @@ export default function Vantage() {
                                       <div className="w-4 h-[60%] bg-emerald-500 dark:bg-emerald-500/70 rounded-t-sm flex-shrink-0" />
                                       <MotionDiv initial={{ height: 0 }} animate={{ height: '80%' }} className="w-4 bg-emerald-600 dark:bg-emerald-500 rounded-t-sm flex-shrink-0" />
                                       <div className="w-4 h-[95%] bg-emerald-700 dark:bg-emerald-600 rounded-t-sm flex-shrink-0" />
-                      </div>
+                                    </div>
                                     <div className="text-center text-[10px] font-bold text-teal-700/70 dark:text-teal-400/70 uppercase break-words">Projected 5yr Revenue</div>
-                    </div>
-                  </div>
-                    </MotionDiv>
-                  )}
+                                  </div>
+                                </div>
+                              </MotionDiv>
+                            )}
 
                             {detailTab === 'demographics' && (
                               <MotionDiv
@@ -1077,22 +1077,22 @@ export default function Vantage() {
                                   locationName={selectedLocationData.name}
                                   demographics={(selectedLocationData as any).demographics}
                                 />
-              </MotionDiv>
-            )}
+                              </MotionDiv>
+                            )}
 
                             {detailTab === 'competitors' && (
-              <MotionDiv
+                              <MotionDiv
                                 key="competitors"
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
                               >
                                 <CompetitorsTab locationName={selectedLocationData.name} />
-              </MotionDiv>
-            )}
+                              </MotionDiv>
+                            )}
 
                             {detailTab === 'financials' && (
-                    <MotionDiv
+                              <MotionDiv
                                 key="financials"
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -1108,28 +1108,28 @@ export default function Vantage() {
                                     assumptions: (selectedLocationData as any).assumptions || []
                                   }}
                                 />
-                    </MotionDiv>
-                  )}
+                              </MotionDiv>
+                            )}
 
                             {detailTab === 'insights' && (
-              <MotionDiv
+                              <MotionDiv
                                 key="insights"
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
                               >
-                                <AIInsights 
-                                  locationName={selectedLocationData.name} 
+                                <AIInsights
+                                  locationName={selectedLocationData.name}
                                   score={selectedLocationData.score}
                                   locationData={selectedLocationData}
                                   businessType="Boba Tea Shop"
                                   targetDemo="Gen Z Students"
                                 />
-            </MotionDiv>
-            )}
+                              </MotionDiv>
+                            )}
 
                             {detailTab === 'comparison' && (
-              <MotionDiv
+                              <MotionDiv
                                 key="comparison"
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -1139,12 +1139,12 @@ export default function Vantage() {
                               </MotionDiv>
                             )}
                           </AnimatePresence>
-                      </div>
+                        </div>
                       </MotionDiv>
                     )}
-                    </MotionDiv>
-                  )}
-                </AnimatePresence>
+                  </MotionDiv>
+                )}
+              </AnimatePresence>
             </div>
           </MotionDiv>
         )}

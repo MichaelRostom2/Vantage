@@ -4,7 +4,6 @@
 
 > AI-powered multi-agent platform that transforms "I want to open a business" into a complete location intelligence report — with market analysis, revenue projections, competitor gaps, and demographic heatmaps — in 60 seconds.
 
-This project was built for Hack@Brown 2026.
 **Built at Hack@Brown 2026** | Jan 31 – Feb 1 | By TEAM CMYK: Candy Xie, Karen Yang, Michael Rostom, Yolanda Hu
 
 ---
