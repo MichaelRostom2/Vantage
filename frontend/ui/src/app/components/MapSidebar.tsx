@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Layers, ChevronLeft, ChevronRight, X, MapPin, Users, DollarSign, Calendar, Building2, TrendingUp, ExternalLink } from 'lucide-react';
 import type { LocationResult } from '../../services/api';
+import { GOOGLE_MAPS_API_KEY } from '../config/keys';
 
 const LAYERS = [
   { key: 'none', label: 'None' },
@@ -18,12 +19,12 @@ interface MapSidebarProps {
   hoveredNeighborhood?: any;
 }
 
-export const MapSidebar: React.FC<MapSidebarProps> = ({ 
-  colorMode, 
-  setColorMode, 
-  isCollapsed, 
+export const MapSidebar: React.FC<MapSidebarProps> = ({
+  colorMode,
+  setColorMode,
+  isCollapsed,
   onToggle,
-  hoveredNeighborhood 
+  hoveredNeighborhood
 }) => {
   const activeLegend = LAYERS.find((l) => l.key === colorMode)?.legend;
 
@@ -69,11 +70,10 @@ export const MapSidebar: React.FC<MapSidebarProps> = ({
               {LAYERS.map(({ key, label }) => (
                 <label
                   key={key}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                    colorMode === key
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer transition-colors ${colorMode === key
                       ? 'bg-teal-50 dark:bg-teal-500/20 border border-teal-300 dark:border-teal-500/30'
                       : 'hover:bg-slate-50 dark:hover:bg-slate-700 border border-transparent'
-                  }`}
+                    }`}
                 >
                   <input
                     type="radio"
@@ -158,11 +158,11 @@ interface MapDetailPanelProps {
   onClose: () => void;
 }
 
-export const MapDetailPanel: React.FC<MapDetailPanelProps> = ({ 
-  location, 
-  isCollapsed, 
-  onToggle, 
-  onClose 
+export const MapDetailPanel: React.FC<MapDetailPanelProps> = ({
+  location,
+  isCollapsed,
+  onToggle,
+  onClose
 }) => {
   if (!location) return null;
 
@@ -203,7 +203,7 @@ export const MapDetailPanel: React.FC<MapDetailPanelProps> = ({
             {/* Header with Google Street View */}
             <div className="relative h-52 flex-none overflow-hidden">
               <img
-                src={`https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${coords.lat},${coords.lng}&fov=90&pitch=10&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`}
+                src={`https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${coords.lat},${coords.lng}&fov=90&pitch=10&key=${GOOGLE_MAPS_API_KEY}`}
                 alt={`Street view of ${location.name}`}
                 className="absolute inset-0 w-full h-full object-cover"
                 onError={(e) => {
