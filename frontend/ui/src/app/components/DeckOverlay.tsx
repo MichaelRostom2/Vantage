@@ -11,6 +11,7 @@ interface DeckOverlayProps {
   neighborhoods?: any; // GeoJSON neighborhoods data
   colorMode?: string; // 'none' | 'population' | 'age' | 'income'
   onHoverNeighborhood?: (neighborhood: any) => void;
+  onHoverDot?: (hovering: boolean) => void;
 }
 
 // Convert x, y percentages to lat/lng (NYC bounds approximation)
@@ -124,6 +125,7 @@ export default function DeckOverlay({
   neighborhoods,
   colorMode = 'none',
   onHoverNeighborhood,
+  onHoverDot,
 }: DeckOverlayProps) {
   const map = useMap();
   const [overlay, setOverlay] = useState<GoogleMapsOverlay | null>(null);
@@ -259,9 +261,7 @@ export default function DeckOverlay({
           lineWidthMinPixels: 2,
           pickable: true,
           onHover: (info: any) => {
-            if (map) {
-              map.getDiv().style.cursor = info.object ? 'pointer' : '';
-            }
+            onHoverDot?.(!!info.object);
           },
           onClick: (info: any) => {
             if (info.object && onSelectLocation) {
@@ -277,7 +277,7 @@ export default function DeckOverlay({
     }
 
     return result;
-  }, [locations, selectedLocationId, onSelectLocation, neighborhoods, colorMode, onHoverNeighborhood]);
+  }, [locations, selectedLocationId, onSelectLocation, neighborhoods, colorMode, onHoverNeighborhood, onHoverDot, map]);
 
   useEffect(() => {
     if (overlay) {

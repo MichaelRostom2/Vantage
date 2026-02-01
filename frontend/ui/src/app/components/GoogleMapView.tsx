@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { APIProvider, Map as GoogleMap, useMap } from '@vis.gl/react-google-maps';
 import DeckOverlay from './DeckOverlay';
 import type { LocationResult } from '../../services/api';
@@ -26,18 +26,32 @@ export function percentToLatLng(x: number, y: number): { lat: number; lng: numbe
 }
 
 interface MapControllerProps {
+  targetId: number | null;
   target: LocationResult | null;
+  rightPanelWidth?: number;
 }
 
-function MapController({ target }: MapControllerProps) {
+function MapController({ targetId, target, rightPanelWidth = 0 }: MapControllerProps) {
   const map = useMap();
+  const prevIdRef = useRef<number | null>(null);
+
   useEffect(() => {
-    if (map && target) {
-      const coords = percentToLatLng(target.x, target.y);
-      map.panTo({ lat: coords.lat, lng: coords.lng });
-      map.setZoom(15);
+    if (!map || !target || targetId === prevIdRef.current) return;
+    prevIdRef.current = targetId;
+
+    const lat = target.lat ?? (40.5 + (target.y / 100) * 0.4);
+    const lng = target.lng ?? (-74.3 + (target.x / 100) * 0.6);
+    map.panTo({ lat, lng });
+    map.setZoom(15);
+
+    // Offset so the pin centers in the visible area (not behind the sidebar)
+    if (rightPanelWidth > 0) {
+      setTimeout(() => map.panBy(rightPanelWidth / 2, 0), 50);
     }
-  }, [map, target]);
+
+    if (!targetId) prevIdRef.current = null;
+  }, [map, targetId, target, rightPanelWidth]);
+
   return null;
 }
 
@@ -104,6 +118,9 @@ export default function GoogleMapView({
   colorMode = 'none',
   onHoverNeighborhood,
 }: GoogleMapViewProps) {
+  const [hoveringDot, setHoveringDot] = useState(false);
+  const onHoverDot = useCallback((hovering: boolean) => setHoveringDot(hovering), []);
+
   // Don't render if API key is missing
   if (!GOOGLE_MAPS_API_KEY) {
     return (
@@ -116,7 +133,8 @@ export default function GoogleMapView({
   }
 
   return (
-    <div className="w-full h-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm absolute inset-0">
+    <div className={`w-full h-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm absolute inset-0${hoveringDot ? ' map-cursor-pointer' : ''}`}>
+      <style>{`.map-cursor-pointer, .map-cursor-pointer * { cursor: pointer !important; }`}</style>
       <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
         <GoogleMap
           defaultCenter={NYC_CENTER}
@@ -134,9 +152,12 @@ export default function GoogleMapView({
             neighborhoods={neighborhoods}
             colorMode={colorMode}
             onHoverNeighborhood={onHoverNeighborhood}
+            onHoverDot={onHoverDot}
           />
           <MapController
+            targetId={selectedLocationId}
             target={locations.find((loc) => loc.id === selectedLocationId) || null}
+            rightPanelWidth={selectedLocationId ? 380 : 0}
           />
           <MapClickHandler locations={locations} onSelectLocation={onSelectLocation} />
         </GoogleMap>
