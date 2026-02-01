@@ -12,7 +12,6 @@ class ScoreRequest(Model):
     latitude: float
     longitude: float
 
-
 orchestrator = Agent(
     name="orchestrator",
     seed="orchdawg",
@@ -21,6 +20,9 @@ orchestrator = Agent(
     network="testnet",
 )
 location_scout_address = "agent1qtmh344czvgrgregw9xf7490s7a9qc9twvz3njq6ye6rn0gnpwjg53el5um"
+competitor_intel_address = "agent1qd33unn63a8qxf8nnex00930nk6hz5scft09rxyk955vks7a7cef7ukd9sz"
+
+
 @orchestrator.on_event("startup")
 async def startup_function(ctx: Context):
     ctx.logger.info(f"Hello, I'm agent {orchestrator.name} and my address is {orchestrator.address}.")
@@ -43,6 +45,15 @@ async def handle_score_request(ctx: Context, sender: str, msg: ScoreRequest):
                        longitude=msg.longitude)
     ctx.logger.info(f"Sending message to location_scout at {location_scout_address}")
     await ctx.send(location_scout_address, msg)
+
+    # ask for competitor intel for that business
+    msg = ScoreRequest(neighborhood=msg.neighborhood,
+                       business_type=msg.business_type,
+                       target_demo=msg.target_demo,
+                       latitude=msg.latitude,
+                       longitude=msg.longitude)
+    ctx.logger.info(f"Sending message to competitor_intel at {competitor_intel_address}")
+    await ctx.send(competitor_intel_address, msg)
 
   
 class Message(Model):

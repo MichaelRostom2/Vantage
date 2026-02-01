@@ -12,8 +12,8 @@ class ScoreRequest(Model):
 inputter = Agent(
     name="inputter",
     seed="inputter_seed_phrase",
-    port=8002,
-    endpoint=["http://localhost:8002/submit"],
+    port=7999,
+    endpoint=["http://localhost:7999/submit"],
     network="testnet",
 )
 

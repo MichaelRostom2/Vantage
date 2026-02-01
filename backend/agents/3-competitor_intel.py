@@ -5,11 +5,17 @@ import os
 import json
 import hashlib
 
-class CompetitorRequest(Model):
-    lat: float
-    lng: float
+class ScoreRequest(Model):
+    neighborhood: str
     business_type: str
-    radius: int = 1000  # meters
+    target_demo: str
+    latitude: float
+    longitude: float
+
+class ScoreResponse(Model):
+    score: int
+    confidence: str 
+    breakdown: dict = {}
 
 class Competitor(Model):
     name: str
@@ -18,17 +24,11 @@ class Competitor(Model):
     price_level: int
     address: str
 
-class CompetitorResponse(Model):
-    competitors: list
-    saturation_score: int  # 0-100, higher = more saturated
-    gap_analysis: str
-    data_source: str
-
 competitor_intel = Agent(
     name="competitor_intel",
     seed="competitor_intel_seed_phrase",
-    port=8002,
-    endpoint=["http://localhost:8002/submit"],
+    port=8003,
+    endpoint=["http://localhost:8003/submit"],
     network="testnet",
 )
 
@@ -79,23 +79,82 @@ def get_nearby_competitors(lat, lng, business_type, radius):
         return []  # Fallback to empty on error
 
 def calculate_saturation(competitor_count):
-    """More competitors = higher saturation score"""
+    """More competitors = less score"""
     if competitor_count == 0:
-        return 20  # Unproven market
+        return 90  # No competitors
     elif competitor_count <= 2:
-        return 30  # Low saturation
+        return 70  # Low saturation
     elif competitor_count <= 5:
         return 50  # Moderate
     elif competitor_count <= 8:
-        return 70  # High
+        return 30  # High
     else:
-        return 90  # Oversaturated
+        return 20 # Very high saturation
 
-@competitor_intel.on_message(model=CompetitorRequest)
-async def analyze_competitors(ctx: Context, sender: str, msg: CompetitorRequest):
-    ctx.logger.info(f"Analyzing competitors for {msg.business_type} at ({msg.lat}, {msg.lng})")
-    
-    competitors = get_nearby_competitors(msg.lat, msg.lng, msg.business_type, msg.radius)
+def calculate_confidence(competitors, radius):
+    """Estimate confidence from data quality (not saturation)."""
+    competitor_count = len(competitors)
+    total_reviews = sum(c.get("reviews", 0) for c in competitors)
+    rated_count = sum(1 for c in competitors if c.get("rating", 0) > 0)
+
+    # Coverage: at least half of results have ratings
+    rating_coverage = rated_count / competitor_count if competitor_count > 0 else 0
+
+    # Simple scoring from 0-100
+    score = 0
+    if competitor_count >= 5:
+        score += 40
+    elif competitor_count >= 3:
+        score += 25
+    elif competitor_count >= 1:
+        score += 10
+
+    if total_reviews >= 1000:
+        score += 40
+    elif total_reviews >= 300:
+        score += 25
+    elif total_reviews >= 50:
+        score += 10
+
+    if rating_coverage >= 0.7:
+        score += 20
+    elif rating_coverage >= 0.4:
+        score += 10
+
+    # Slightly reduce confidence for very small radius (less market coverage)
+    if radius < 800:
+        score = max(score - 10, 0)
+
+    if score >= 70:
+        return "high", {
+            "confidence_score": score,
+            "competitor_count": competitor_count,
+            "total_reviews": total_reviews,
+            "rating_coverage": round(rating_coverage, 2),
+            "radius_meters": radius,
+        }
+    if score >= 40:
+        return "medium", {
+            "confidence_score": score,
+            "competitor_count": competitor_count,
+            "total_reviews": total_reviews,
+            "rating_coverage": round(rating_coverage, 2),
+            "radius_meters": radius,
+        }
+    return "low", {
+        "confidence_score": score,
+        "competitor_count": competitor_count,
+        "total_reviews": total_reviews,
+        "rating_coverage": round(rating_coverage, 2),
+        "radius_meters": radius,
+    }
+
+@competitor_intel.on_message(model=ScoreRequest)
+async def analyze_competitors(ctx: Context, sender: str, msg: ScoreRequest):
+    ctx.logger.info(f"Analyzing competitors for {msg.business_type} at ({msg.latitude}, {msg.longitude})")
+
+    search_radius = 1000
+    competitors = get_nearby_competitors(msg.latitude, msg.longitude, msg.business_type, search_radius)
     saturation = calculate_saturation(len(competitors))
     
     # Simple gap analysis
@@ -110,11 +169,19 @@ async def analyze_competitors(ctx: Context, sender: str, msg: CompetitorRequest)
     else:
         gap = "Saturated market — need strong differentiation (niche flavors, experience, pricing)."
     
-    response = CompetitorResponse(
-        competitors=competitors,
-        saturation_score=saturation,
-        gap_analysis=gap,
-        data_source="Google Places API (live)"
+    # Determine confidence from data quality, not saturation
+    confidence, confidence_basis = calculate_confidence(competitors, search_radius)
+    
+    response = ScoreResponse(
+        score=saturation,
+        confidence=confidence,
+        breakdown={
+            "competitors": competitors,
+            "saturation_score": saturation,
+            "gap_analysis": gap,
+            "competitor_count": len(competitors),
+            "confidence_basis": confidence_basis
+        }
     )
     
     await ctx.send(sender, response)
