@@ -30,6 +30,9 @@ class RevenueResponse(Model):
     assumptions: list
 
 class output(Model):
+    business_type: str = None
+    neighborhood: str = None
+    rent_estimate: float = None # monthly
     loc_result: ScoreResponse = None
     comp_result: ScoreResponse = None
     rev_result: RevenueResponse = None
@@ -111,6 +114,10 @@ async def handle_score_request(ctx: Context, sender: str, msg: ScoreRequest):
     ctx.logger.info(f"Longitude: {msg.longitude}")
     ctx.logger.info(f"Rent Estimate: {msg.rent_estimate}")
 
+    out.business_type = msg.business_type
+    out.neighborhood = msg.neighborhood
+    out.rent_estimate = msg.rent_estimate
+
     # ask for location score for that business
     msg = ScoreRequest(neighborhood=msg.neighborhood,
                        business_type=msg.business_type,
@@ -131,15 +138,6 @@ async def handle_score_request(ctx: Context, sender: str, msg: ScoreRequest):
     ctx.logger.info(f"Sending message to competitor_intel at {competitor_intel_address}")
     await ctx.send(competitor_intel_address, msg)
 
-    # ask for revenue analyst for that business
-    msg = RevenueRequest(business_type=msg.business_type,
-                       neighborhood=msg.neighborhood,
-                       foot_traffic_score=out.loc_result.breakdown.foot_traffic.count,
-                       competition_count=out.comp_result.breakdown.competitor_count,
-                       rent_estimate=msg.rent_estimate)
-    ctx.logger.info(f"Sending message to revenue_analyst at {revenue_analyst_address}")
-    await ctx.send(revenue_analyst_address, msg)
-
 @orchestrator.on_message(model=ScoreResponse)
 async def handle_score_response(ctx: Context, sender: str, msg: ScoreResponse):
     ctx.logger.info(f'I have received a ScoreResponse from {sender}.')
@@ -150,6 +148,15 @@ async def handle_score_response(ctx: Context, sender: str, msg: ScoreResponse):
         out.loc_result = msg
     elif not out.comp_result:
         out.comp_result = msg
+
+    # ask for revenue analyst for that business
+    msg = RevenueRequest(business_type=out.business_type,
+                       neighborhood=out.neighborhood,
+                       foot_traffic_score=out.loc_result.breakdown['foot_traffic']['count'],
+                       competition_count=out.comp_result.breakdown['competitor_count'],
+                       rent_estimate=out.rent_estimate)
+    ctx.logger.info(f"Sending message to revenue_analyst at {revenue_analyst_address}")
+    await ctx.send(revenue_analyst_address, msg)
     
 
 @orchestrator.on_message(model=RevenueResponse)
