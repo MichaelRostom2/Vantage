@@ -258,8 +258,17 @@ export default function DeckOverlay({
           stroked: true,
           lineWidthMinPixels: 2,
           pickable: true,
+          onHover: (info: any) => {
+            if (!map) return;
+            map.getDiv().style.cursor = info.object ? 'pointer' : '';
+          },
           onClick: (info: any) => {
-            if (info.object && onSelectLocation) {
+            if (!info.object) return;
+            if (map && Number.isFinite(info.object.lat) && Number.isFinite(info.object.lng)) {
+              map.panTo({ lat: info.object.lat, lng: info.object.lng });
+              map.setZoom(12);
+            }
+            if (onSelectLocation) {
               onSelectLocation(info.object.id);
             }
           },

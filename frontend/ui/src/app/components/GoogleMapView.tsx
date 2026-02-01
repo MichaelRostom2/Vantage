@@ -8,6 +8,27 @@ const NYC_CENTER = { lat: 40.7128, lng: -74.006 };
 const GMAP_MAP_ID = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || '';
 const PLACEHOLDER_API_KEY = 'PASTE_YOUR_GOOGLE_MAPS_API_KEY_HERE';
 
+const DARK_GREY_MAP_STYLE: google.maps.MapTypeStyle[] = [
+  { elementType: 'geometry', stylers: [{ color: '#f2f2f2' }] },
+  { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#6b6b6b' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#f0f0f0' }] },
+  { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#e0e0e0' }] },
+  { featureType: 'administrative.country', elementType: 'labels.text.fill', stylers: [{ color: '#5f5f5f' }] },
+  { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#5f5f5f' }] },
+  { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#ededed' }] },
+  { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#7a7a7a' }] },
+  { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#e6eee6' }] },
+  { featureType: 'poi.park', elementType: 'labels.text.fill', stylers: [{ color: '#6f846f' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#dcdcdc' }] },
+  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#cfcfcf' }] },
+  { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#6f6f6f' }] },
+  { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#e4e4e4' }] },
+  { featureType: 'transit.station', elementType: 'labels.text.fill', stylers: [{ color: '#6f6f6f' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#dfe5ea' }] },
+  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#6b6b6b' }] },
+];
+
 // Convert x, y percentages to lat/lng (shared utility)
 export function percentToLatLng(x: number, y: number): { lat: number; lng: number } {
   const lng = -74.3 + (x / 100) * 0.6;
@@ -124,6 +145,8 @@ export default function GoogleMapView({
           disableDefaultUI={false}
           className="w-full h-full"
           mapId={GMAP_MAP_ID}
+          styles={DARK_GREY_MAP_STYLE}
+          backgroundColor="#f2f2f2"
         >
           <DeckOverlay
             locations={locations}
