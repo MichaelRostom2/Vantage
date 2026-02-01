@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Layers, ChevronLeft, ChevronRight, X, MapPin, Users, DollarSign, Calendar, Building2, TrendingUp, ExternalLink } from 'lucide-react';
+import { Layers, ChevronLeft, ChevronRight, X, MapPin, DollarSign, TrendingUp, ExternalLink } from 'lucide-react';
 import type { LocationResult } from '../../services/api';
+
+const MotionDiv = motion.div as any;
+const MotionAside = motion.aside as any;
 
 const LAYERS = [
   { key: 'none', label: 'None' },
@@ -18,17 +21,17 @@ interface MapSidebarProps {
   hoveredNeighborhood?: any;
 }
 
-export const MapSidebar: React.FC<MapSidebarProps> = ({ 
-  colorMode, 
-  setColorMode, 
-  isCollapsed, 
+export const MapSidebar: React.FC<MapSidebarProps> = ({
+  colorMode,
+  setColorMode,
+  isCollapsed,
   onToggle,
-  hoveredNeighborhood 
+  hoveredNeighborhood
 }) => {
   const activeLegend = LAYERS.find((l) => l.key === colorMode)?.legend;
 
   return (
-    <motion.aside
+    <MotionAside
       initial={false}
       animate={{ width: isCollapsed ? 60 : 280 }}
       className="flex flex-col bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 overflow-hidden relative z-10"
@@ -48,7 +51,7 @@ export const MapSidebar: React.FC<MapSidebarProps> = ({
 
       <AnimatePresence mode="wait">
         {!isCollapsed ? (
-          <motion.div
+          <MotionDiv
             key="expanded"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -69,11 +72,10 @@ export const MapSidebar: React.FC<MapSidebarProps> = ({
               {LAYERS.map(({ key, label }) => (
                 <label
                   key={key}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                    colorMode === key
-                      ? 'bg-teal-50 dark:bg-teal-500/20 border border-teal-300 dark:border-teal-500/30'
-                      : 'hover:bg-slate-50 dark:hover:bg-slate-700 border border-transparent'
-                  }`}
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer transition-colors ${colorMode === key
+                    ? 'bg-teal-50 dark:bg-teal-500/20 border border-teal-300 dark:border-teal-500/30'
+                    : 'hover:bg-slate-50 dark:hover:bg-slate-700 border border-transparent'
+                    }`}
                 >
                   <input
                     type="radio"
@@ -134,9 +136,9 @@ export const MapSidebar: React.FC<MapSidebarProps> = ({
                 </div>
               </>
             )}
-          </motion.div>
+          </MotionDiv>
         ) : (
-          <motion.div
+          <MotionDiv
             key="collapsed"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -144,10 +146,10 @@ export const MapSidebar: React.FC<MapSidebarProps> = ({
             className="flex flex-col items-center py-4 gap-3"
           >
             <Layers className="w-5 h-5 text-slate-400 dark:text-slate-500" />
-          </motion.div>
+          </MotionDiv>
         )}
       </AnimatePresence>
-    </motion.aside>
+    </MotionAside>
   );
 };
 
@@ -158,11 +160,11 @@ interface MapDetailPanelProps {
   onClose: () => void;
 }
 
-export const MapDetailPanel: React.FC<MapDetailPanelProps> = ({ 
-  location, 
-  isCollapsed, 
-  onToggle, 
-  onClose 
+export const MapDetailPanel: React.FC<MapDetailPanelProps> = ({
+  location,
+  isCollapsed,
+  onToggle,
+  onClose
 }) => {
   if (!location) return null;
 
@@ -173,7 +175,7 @@ export const MapDetailPanel: React.FC<MapDetailPanelProps> = ({
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${coords.lat},${coords.lng}`;
 
   return (
-    <motion.div
+    <MotionDiv
       initial={false}
       animate={{ width: isCollapsed ? 60 : 380 }}
       className="absolute top-0 right-0 bottom-0 bg-white dark:bg-slate-800 z-20 flex flex-col overflow-hidden rounded-l-xl border-l border-slate-200 dark:border-slate-700 shadow-xl"
@@ -193,7 +195,7 @@ export const MapDetailPanel: React.FC<MapDetailPanelProps> = ({
 
       <AnimatePresence mode="wait">
         {!isCollapsed ? (
-          <motion.div
+          <MotionDiv
             key="expanded"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -315,15 +317,15 @@ export const MapDetailPanel: React.FC<MapDetailPanelProps> = ({
                   href={googleMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-teal-50 dark:bg-teal-500/20 border border-teal-200 dark:border-teal-500/30 text-sm font-medium text-teal-600 dark:text-teal-400 hover:bg-amber-100 dark:hover:bg-amber-500/30 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-teal-50 dark:bg-teal-500/20 border border-teal-200 dark:border-teal-500/30 text-sm font-medium text-teal-600 dark:text-teal-400 hover:bg-teal-100 dark:hover:bg-teal-500/30 transition-colors"
                 >
                   <ExternalLink size={13} /> View on Google Maps
                 </a>
               </div>
             </div>
-          </motion.div>
+          </MotionDiv>
         ) : (
-          <motion.div
+          <MotionDiv
             key="collapsed"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -331,9 +333,9 @@ export const MapDetailPanel: React.FC<MapDetailPanelProps> = ({
             className="flex flex-col items-center justify-center h-full"
           >
             <MapPin className="w-5 h-5 text-slate-400 dark:text-slate-500" />
-          </motion.div>
+          </MotionDiv>
         )}
       </AnimatePresence>
-    </motion.div>
+    </MotionDiv>
   );
 };
