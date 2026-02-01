@@ -1,5 +1,6 @@
 from uagents import Agent, Context, Model
 import asyncio
+import os
 import json
 from pathlib import Path
 from datetime import datetime
@@ -43,17 +44,42 @@ class output(Model):
     comp_result: ScoreResponse = None
     rev_result: RevenueResponse = None
 
+# Agent configuration - supports Agentverse deployment
+AGENT_ENDPOINT = os.getenv("ORCHESTRATOR_ENDPOINT", "http://localhost:8000/submit")
+AGENT_PORT = int(os.getenv("ORCHESTRATOR_PORT", "8000"))
+AGENT_NETWORK = os.getenv("FETCH_AI_NETWORK", "testnet")
+
 orchestrator = Agent(
     name="orchestrator",
     seed="orchdawg",
-    port=8000,
-    endpoint=["http://localhost:8000/submit"],
-    network="testnet",
+    port=AGENT_PORT,
+    endpoint=[AGENT_ENDPOINT],
+    network=AGENT_NETWORK,
 )
 
-location_scout_address = "agent1qtmh344czvgrgregw9xf7490s7a9qc9twvz3njq6ye6rn0gnpwjg53el5um"
-competitor_intel_address = "agent1qwztegem8pxg4u3edsvwngrnx2pqu9ju8fd50kz9l4yvakqqysn2xjdamxu"
-revenue_analyst_address = "agent1qvjvmz2ej8vnjpxnw8fhkazfky2mfx5se4au508xapjrmdkhf9782cwpm5q"
+# Agentverse metadata (for registration)
+AGENT_METADATA = {
+    "name": "vantage-orchestrator",
+    "description": "Main coordinator agent that orchestrates location intelligence analysis across specialist agents",
+    "version": "1.0.0",
+    "capabilities": ["orchestration", "location_analysis", "agent_coordination"],
+    "tags": ["location-intelligence", "orchestrator", "coordination"],
+    "author": "Vantage Team"
+}
+
+# Agent addresses - can be overridden via environment variables for Agentverse
+location_scout_address = os.getenv(
+    "LOCATION_SCOUT_ADDRESS",
+    "agent1qtmh344czvgrgregw9xf7490s7a9qc9twvz3njq6ye6rn0gnpwjg53el5um"
+)
+competitor_intel_address = os.getenv(
+    "COMPETITOR_INTEL_ADDRESS",
+    "agent1qwztegem8pxg4u3edsvwngrnx2pqu9ju8fd50kz9l4yvakqqysn2xjdamxu"
+)
+revenue_analyst_address = os.getenv(
+    "REVENUE_ANALYST_ADDRESS",
+    "agent1qvjvmz2ej8vnjpxnw8fhkazfky2mfx5se4au508xapjrmdkhf9782cwpm5q"
+)
 
 # Database file path for storing results
 DATABASE_FILE = Path(__file__).parent / 'output' / 'orchestrator_results.json'
