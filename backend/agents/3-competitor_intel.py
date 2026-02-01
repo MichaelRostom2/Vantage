@@ -35,8 +35,7 @@ def get_nearby_competitors(lat, lng, business_type, radius):
     params = {
         "location": f"{lat},{lng}",
         "radius": radius,
-        "type": "cafe",
-        "keyword": business_type,
+        "type": business_type,
         "key": GOOGLE_PLACES_API_KEY
     }
     
@@ -100,3 +99,4 @@ async def analyze_competitors(ctx: Context, sender: str, msg: CompetitorRequest)
 
 if __name__ == "__main__":
     competitor_intel.run()
+
