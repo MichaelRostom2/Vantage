@@ -20,22 +20,31 @@ orchestrator = Agent(
     endpoint=["http://localhost:8000/submit"],
     network="testnet",
 )
+location_scout_address = "agent1qtmh344czvgrgregw9xf7490s7a9qc9twvz3njq6ye6rn0gnpwjg53el5um"
 @orchestrator.on_event("startup")
 async def startup_function(ctx: Context):
     ctx.logger.info(f"Hello, I'm agent {orchestrator.name} and my address is {orchestrator.address}.")
 
-    # Send message to location_scout to start process
-    # ask for location score for a sample business
-    location_scout_address = "agent1qtmh344czvgrgregw9xf7490s7a9qc9twvz3njq6ye6rn0gnpwjg53el5um"
-    msg = ScoreRequest(
-        neighborhood="Williamsburg, Brooklyn",
-        business_type="Coffee Shop",
-        target_demo="Young professionals, ages 25-35",
-        latitude=40.721990,
-        longitude= -73.927764)
+
+@orchestrator.on_message(model=ScoreRequest)
+async def handle_score_request(ctx: Context, sender: str, msg: ScoreRequest):
+    ctx.logger.info(f'I have received a ScoreRequest from {sender}.')
+    ctx.logger.info(f"Neighborhood: {msg.neighborhood}")
+    ctx.logger.info(f"Business Type: {msg.business_type}")
+    ctx.logger.info(f"Target Demographic: {msg.target_demo}")
+    ctx.logger.info(f"Latitude: {msg.latitude}")
+    ctx.logger.info(f"Longitude: {msg.longitude}")
+
+    # ask for location score for that business
+    msg = ScoreRequest(neighborhood=msg.neighborhood,
+                       business_type=msg.business_type,
+                       target_demo=msg.target_demo,
+                       latitude=msg.latitude,
+                       longitude=msg.longitude)
     ctx.logger.info(f"Sending message to location_scout at {location_scout_address}")
     await ctx.send(location_scout_address, msg)
-    
+
+  
 class Message(Model):
     message: str
 
