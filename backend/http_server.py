@@ -96,7 +96,21 @@ except ImportError as e:
     data_service = None
 
 app = Flask(__name__)
-CORS(app)
+
+# Enable CORS for frontend access (including Vercel deployments)
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "http://localhost:5173",
+            "http://localhost:5174", 
+            "http://localhost:5175",
+            "https://*.vercel.app",
+            "https://vantage-*.vercel.app"
+        ],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
 # Default NYC location (Manhattan)
 DEFAULT_LAT = 40.7128
