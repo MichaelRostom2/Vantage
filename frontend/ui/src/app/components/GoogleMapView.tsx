@@ -105,7 +105,7 @@ export default function GoogleMapView({
   onHoverNeighborhood,
 }: GoogleMapViewProps) {
   // Don't render if API key is missing
-  if (!GMAP_API_KEY) {
+  if (!GOOGLE_MAPS_API_KEY) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
         <p className="text-slate-500 dark:text-slate-400 text-sm">
@@ -117,7 +117,7 @@ export default function GoogleMapView({
 
   return (
     <div className="w-full h-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm absolute inset-0">
-      <APIProvider apiKey={GMAP_API_KEY}>
+      <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
         <GoogleMap
           defaultCenter={NYC_CENTER}
           defaultZoom={11}
