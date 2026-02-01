@@ -27,7 +27,7 @@ competitor_intel = Agent(
     seed="competitor_intel_seed_phrase"
 )
 
-GOOGLE_PLACES_API_KEY = os.getenv("GOOGLE_PLACES_API_KEY")
+GOOGLE_PLACES_API_KEY = "AIzaSyD8miMgNXY0knfl3zPD4RroatsVKJRGGQc"
 
 def get_nearby_competitors(lat, lng, business_type, radius):
     """Fetch competitors from Google Places API"""
@@ -99,4 +99,5 @@ async def analyze_competitors(ctx: Context, sender: str, msg: CompetitorRequest)
 
 if __name__ == "__main__":
     competitor_intel.run()
+
 
