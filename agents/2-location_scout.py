@@ -66,7 +66,6 @@ async def handle_message(ctx: Context, sender: str, scoreRequest: ScoreRequest):
             breakdown=location_result['breakdown']
         )
     )
-# # Foot Traffic Calculation
 # def calculate_foot_traffic(neighborhood_code):
 #     """
 #     Based on business density from licenses data
@@ -80,7 +79,6 @@ async def handle_message(ctx: Context, sender: str, scoreRequest: ScoreRequest):
 #     score = min(100, (density / max_density) * 100)
 #     return score
 
-# # Transit Access Calculation
 def haversine(lat1, lon1, lat2, lon2):
     """
     Calculate the great circle distance between two points 
@@ -171,9 +169,6 @@ def calculate_location_score(neighborhood, business_type, target_demo, latitude,
             # Additional factors will be added here
         }
     }
-
-
-
 
 if __name__ == "__main__":
     location_scout.run()
