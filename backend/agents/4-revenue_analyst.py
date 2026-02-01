@@ -1,5 +1,6 @@
 # revenue_analyst.py
 from uagents import Agent, Context, Model
+import os
 from typing import Optional
 import os
 
