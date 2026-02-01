@@ -11,6 +11,11 @@
   transition: all 0.2s ease;
 }
 
+.dark .vantage-card {
+  background: rgb(15, 23, 42);
+  border-color: rgba(51, 65, 85, 1);
+}
+
 .vantage-card:hover {
   box-shadow: 
     0 4px 12px rgba(0, 0, 0, 0.08),
@@ -31,6 +36,21 @@
 /* No infinite animations - only on interaction */
 .vantage-transition {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode base styles */
+.dark {
+  color-scheme: dark;
+}
+
+body {
+  background-color: rgb(255, 255, 255);
+  color: rgb(15, 23, 42);
+}
+
+.dark body {
+  background-color: rgb(15, 23, 42);
+  color: rgb(241, 245, 249);
 }
 
 /* Respect user preferences */

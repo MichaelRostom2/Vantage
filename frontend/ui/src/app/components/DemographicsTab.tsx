@@ -1,0 +1,91 @@
+import React from 'react';
+import { motion } from 'motion/react';
+import { Users, TrendingUp, MapPin } from 'lucide-react';
+
+interface DemographicsTabProps {
+  locationName: string;
+}
+
+export const DemographicsTab: React.FC<DemographicsTabProps> = ({ locationName }) => {
+  const demographics = [
+    { label: 'Gen Z (18-27)', value: '34%', trend: '+12%', color: 'bg-amber-500' },
+    { label: 'Millennials (28-43)', value: '42%', trend: '+8%', color: 'bg-purple-500' },
+    { label: 'Gen X (44-59)', value: '18%', trend: '-3%', color: 'bg-pink-500' },
+    { label: 'Boomers (60+)', value: '6%', trend: '-5%', color: 'bg-orange-500' }
+  ];
+
+  const income = [
+    { range: '$0-50k', value: 12, color: 'bg-slate-300' },
+    { range: '$50-100k', value: 28, color: 'bg-slate-400' },
+    { range: '$100-150k', value: 35, color: 'bg-amber-500' },
+    { range: '$150k+', value: 25, color: 'bg-amber-600' }
+  ];
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h3 className="text-xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+          <Users className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+          Population Demographics
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {demographics.map((demo, idx) => (
+            <motion.div
+              key={demo.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              whileHover={{ scale: 1.05, y: -4 }}
+              className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:shadow-md cursor-pointer transition-all"
+            >
+              <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2 break-words">{demo.label}</div>
+              <div className="text-2xl font-black text-slate-900 dark:text-white mb-1 break-words">{demo.value}</div>
+              <div className={`text-xs font-bold whitespace-nowrap ${demo.trend.startsWith('+') ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                {demo.trend} YoY
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+          Household Income Distribution
+        </h3>
+        <div className="space-y-3">
+          {income.map((inc, idx) => (
+            <div key={inc.range} className="space-y-1">
+              <div className="flex justify-between text-sm">
+                <span className="font-bold text-slate-700 dark:text-slate-300">{inc.range}</span>
+                <span className="font-black text-slate-900 dark:text-white">{inc.value}%</span>
+              </div>
+              <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${inc.value}%` }}
+                  transition={{ delay: idx * 0.1, duration: 0.6 }}
+                  className={`h-full ${inc.color} rounded-full`}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl p-6">
+        <div className="flex items-start gap-3">
+          <MapPin className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <h4 className="font-black text-slate-900 dark:text-white mb-2">Key Insight</h4>
+            <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+              {locationName} has a strong concentration of Gen Z and Millennial residents (76% combined), 
+              with 60% of households earning over $100k annually. This demographic profile aligns perfectly 
+              with boba tea shop target customers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

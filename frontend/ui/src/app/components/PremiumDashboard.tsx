@@ -162,7 +162,7 @@ export const PremiumDashboard: React.FC<PremiumDashboardProps> = ({
               <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                 VANTAGE
               </h1>
-              <p className="text-xs text-gray-500">AI-Powered Location Intelligence</p>
+              <p className="text-xs text-gray-400">AI-Powered Location Intelligence</p>
             </div>
           </div>
         </div>
@@ -203,7 +203,7 @@ export const PremiumDashboard: React.FC<PremiumDashboardProps> = ({
           </motion.div>
           <div>
             <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              SiteSelect
+              VANTAGE
             </h1>
             <p className="text-xs text-gray-500">AI-Powered Location Intelligence</p>
           </div>
