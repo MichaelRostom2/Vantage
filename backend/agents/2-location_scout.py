@@ -22,9 +22,10 @@ class ScoreResponse(Model):
 
 location_scout = Agent(
     name="location_scout",
-    seed="scout_seed_phrase",
+    seed="scoutdawg",
     port=8001,
-    endpoint=["http://localhost:8001/submit"]
+    endpoint=["http://localhost:8001/submit"],
+    network="testnet"
 )
 
 
