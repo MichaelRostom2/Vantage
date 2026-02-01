@@ -263,6 +263,14 @@ export default function DeckOverlay({
               onSelectLocation(info.object.id);
             }
           },
+          onHover: (info: any) => {
+            if (map) {
+              const container = map.getDiv();
+              if (container) {
+                container.style.cursor = info.object ? 'pointer' : '';
+              }
+            }
+          },
           updateTriggers: {
             getFillColor: [selectedLocationId],
             getRadius: [selectedLocationId],

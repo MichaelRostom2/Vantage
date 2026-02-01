@@ -7,6 +7,17 @@ const NYC_CENTER = { lat: 40.7128, lng: -74.006 };
 const GMAP_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const GMAP_MAP_ID = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || '';
 
+// Desaturated grey map style so colored dots stand out
+const MAP_STYLES: google.maps.MapTypeStyle[] = [
+  { elementType: 'geometry', stylers: [{ saturation: -80 }, { lightness: 10 }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#6b7280' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#f1f5f9' }] },
+  { featureType: 'water', elementType: 'geometry.fill', stylers: [{ color: '#cbd5e1' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ saturation: -100 }, { lightness: 20 }] },
+  { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+  { featureType: 'transit', stylers: [{ saturation: -80 }] },
+];
+
 // Convert x, y percentages to lat/lng (shared utility)
 export function percentToLatLng(x: number, y: number): { lat: number; lng: number } {
   const lng = -74.3 + (x / 100) * 0.6;
@@ -113,7 +124,8 @@ export default function GoogleMapView({
           gestureHandling="greedy"
           disableDefaultUI={false}
           className="w-full h-full"
-          mapId={GMAP_MAP_ID}
+          mapId={GMAP_MAP_ID || undefined}
+          styles={GMAP_MAP_ID ? undefined : MAP_STYLES}
         >
           <DeckOverlay
             locations={locations}
