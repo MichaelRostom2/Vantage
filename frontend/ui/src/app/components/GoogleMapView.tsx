@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { APIProvider, Map as GoogleMap, useMap } from '@vis.gl/react-google-maps';
 import DeckOverlay from './DeckOverlay';
 import type { LocationResult } from '../../services/api';
@@ -21,11 +21,20 @@ interface MapControllerProps {
 
 function MapController({ target }: MapControllerProps) {
   const map = useMap();
+  const lastTargetIdRef = useRef<number | null>(null);
+
   useEffect(() => {
     if (map && target) {
+      if (lastTargetIdRef.current === target.id) {
+        return;
+      }
       const coords = percentToLatLng(target.x, target.y);
       map.panTo({ lat: coords.lat, lng: coords.lng });
       map.setZoom(15);
+      lastTargetIdRef.current = target.id;
+    }
+    if (!target) {
+      lastTargetIdRef.current = null;
     }
   }, [map, target]);
   return null;

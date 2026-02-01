@@ -31,7 +31,7 @@ interface MapViewProps {
 }
 
 export const MapView: React.FC<MapViewProps> = ({ markers, onMarkerClick, selectedId }) => {
-  const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
+  const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(true);
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false);
   const [bottomListCollapsed, setBottomListCollapsed] = useState(true);
   const [colorMode, setColorMode] = useState('none');
