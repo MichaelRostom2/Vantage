@@ -1,6 +1,10 @@
 """
 Flask HTTP Bridge Server for Vantage Location Intelligence
 Bridges REST API requests to uagents backend system
+
+Supports both:
+- Direct function calls (current implementation)
+- Agentverse agent messaging (via environment variables)
 """
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -8,10 +12,54 @@ import asyncio
 import requests
 import json
 import sys
+import os
 from typing import Dict, List, Any, Optional
 from geopy.geocoders import Nominatim
 import time
 from pathlib import Path
+
+# Agentverse configuration - agent addresses can be overridden via environment
+# For Agentverse deployment, set these to registered agent addresses
+ORCHESTRATOR_ADDRESS = os.getenv(
+    "ORCHESTRATOR_ADDRESS",
+    "agent1q2wva7fjhjqfklv8sna6q3ftcaf32pt7fev5q9w0qwn5earml3a8qz24n4f"
+)
+LOCATION_SCOUT_ADDRESS = os.getenv(
+    "LOCATION_SCOUT_ADDRESS",
+    "agent1qtmh344czvgrgregw9xf7490s7a9qc9twvz3njq6ye6rn0gnpwjg53el5um"
+)
+COMPETITOR_INTEL_ADDRESS = os.getenv(
+    "COMPETITOR_INTEL_ADDRESS",
+    "agent1qwztegem8pxg4u3edsvwngrnx2pqu9ju8fd50kz9l4yvakqqysn2xjdamxu"
+)
+REVENUE_ANALYST_ADDRESS = os.getenv(
+    "REVENUE_ANALYST_ADDRESS",
+    "agent1qvjvmz2ej8vnjpxnw8fhkazfky2mfx5se4au508xapjrmdkhf9782cwpm5q"
+)
+
+# Agent endpoints for Agentverse (if using HTTP messaging instead of direct calls)
+ORCHESTRATOR_ENDPOINT = os.getenv("ORCHESTRATOR_ENDPOINT")
+LOCATION_SCOUT_ENDPOINT = os.getenv("LOCATION_SCOUT_ENDPOINT")
+COMPETITOR_INTEL_ENDPOINT = os.getenv("COMPETITOR_INTEL_ENDPOINT")
+REVENUE_ANALYST_ENDPOINT = os.getenv("REVENUE_ANALYST_ENDPOINT")
+
+# Use Agentverse messaging if endpoints are configured
+USE_AGENTVERSE_MESSAGING = all([
+    ORCHESTRATOR_ENDPOINT,
+    LOCATION_SCOUT_ENDPOINT,
+    COMPETITOR_INTEL_ENDPOINT,
+    REVENUE_ANALYST_ENDPOINT
+])
+
+if USE_AGENTVERSE_MESSAGING:
+    print("🌐 Agentverse messaging mode enabled")
+    print(f"   Orchestrator: {ORCHESTRATOR_ENDPOINT}")
+    print(f"   Location Scout: {LOCATION_SCOUT_ENDPOINT}")
+    print(f"   Competitor Intel: {COMPETITOR_INTEL_ENDPOINT}")
+    print(f"   Revenue Analyst: {REVENUE_ANALYST_ENDPOINT}")
+else:
+    print("📦 Direct function call mode (default)")
+    print("   Set agent endpoints in environment to enable Agentverse messaging")
 
 # Add backend directory to path to import agent functions
 backend_dir = Path(__file__).parent
@@ -117,12 +165,9 @@ DEFAULT_LAT = 40.7128
 DEFAULT_LNG = -74.0060
 DEFAULT_NEIGHBORHOOD = "Manhattan, NY"
 
-# Agent addresses (from orchestrator.py)
-LOCATION_SCOUT_ADDRESS = "agent1qtmh344czvgrgregw9xf7490s7a9qc9twvz3njq6ye6rn0gnpwjg53el5um"
-COMPETITOR_INTEL_ADDRESS = "agent1qd33unn63a8qxf8nnex00930nk6hz5scft09rxyk955vks7a7cef7ukd9sz"
-REVENUE_ANALYST_ADDRESS = "agent1qd33unn63a8qxf8nnex00930nk6hz5scft09rxyk955vks7a7cef7ukd9sz"  # Same port as competitor_intel
-
-# Note: We're calling agent functions directly, not via HTTP
+# Note: Agent addresses are now defined at the top of the file
+# We're calling agent functions directly, but can switch to Agentverse messaging
+# if endpoints are configured via environment variables
 
 # Request state management (in-memory)
 request_states: Dict[str, Dict[str, Any]] = {}
