@@ -4,14 +4,15 @@
 
 > AI-powered multi-agent platform that transforms "I want to open a business" into a complete location intelligence report — with market analysis, revenue projections, competitor gaps, and demographic heatmaps — in 60 seconds.
 
-**Built at Hack@Brown 2026** | Jan 31 – Feb 1 | For demo purposes, running localhost is more ideal.
+This project was built for Hack@Brown 2026.
+**Built at Hack@Brown 2026** | Jan 31 – Feb 1 | By TEAM CMYK: Candy Xie, Karen Yang, Michael Rostom, Yolanda Hu
 
 ---
 
 ## The Problem
 
 Site selection is the #1 factor in retail success, but:
-- Enterprise tools (Placer.ai, Esri, SiteZeus) cost **$10K–$50K+/year**
+- Enterprise tools cost **$10K–$50K+/year**
 - Small business owners are priced out
 - **70% of consumers** say location influences their decision to visit
 - Wrong location = business death
@@ -89,14 +90,6 @@ Vantage is a **multi-agent system** that generates a complete **Business Opportu
 │              FULL BUSINESS OPPORTUNITY PACKAGE              │
 └─────────────────────────────────────────────────────────────┘
 ```
-
-**Key Implementation Details:**
-- **Parallel Processing**: Uses Python's `ThreadPoolExecutor` to process multiple locations concurrently (3-5x speedup)
-- **Demo Cache**: Pre-computed results for 3 common queries stored in-memory for instant responses (<100ms)
-- **Fuzzy Matching**: Business type and demographic normalization with 20% budget tolerance
-- **Minimum Loading Time**: 10-second minimum ensures users see the "AI working" experience
-- **Progressive Messages**: Dynamic loading messages cycle through agent activities
-
 ---
 
 ## Tech Stack
@@ -104,15 +97,13 @@ Vantage is a **multi-agent system** that generates a complete **Business Opportu
 | Layer | Technology | Implementation Notes |
 |-------|------------|---------------------|
 | **Agent Framework** | uagents (Python) | Configured for Agentverse deployment with environment variables |
-| **Backend API** | Flask + Flask-CORS | Parallel processing with ThreadPoolExecutor, demo query caching |
+| **Backend API** | Flask 
 | **Data Processing** | Python (geopy, requests) | AWS S3 integration (boto3) with local file fallback |
-| **Frontend** | React 19 + TypeScript + Vite | Enhanced loading states, Framer Motion animations |
+| **Frontend** | React + TypeScript + Vite | Enhanced loading states, Framer Motion animations |
 | **Styling** | Tailwind CSS + Framer Motion | Responsive design with dark mode support |
 | **Maps** | Google Maps Platform + Deck.gl | Heatmap overlays with neighborhood boundaries |
-| **Data Sources** | NYC Open Data, Census ACS, RentCast API, Visa Merchant Search API | AWS S3 storage for scalable data access |
+| **Data Sources** | NYC Open Data, Census ACS, RentCast API, Visa Merchant Search API 
 | **PDF Export** | html2pdf.js | Full report generation with proper formatting |
-| **Cloud Storage** | AWS S3 | Data files stored in `vantage-location-data` bucket |
-
 ---
 
 ## Key Features
@@ -149,8 +140,6 @@ Change parameters and re-run analysis:
 - Revenue projections (Conservative/Moderate/Optimistic)
 - Competitor gap analysis
 - Demographic breakdowns
-- Visa API merchant data integration (when available)
-
 ---
 
 ## Output: Business Opportunity Package
@@ -189,34 +178,27 @@ Change parameters and re-run analysis:
 - Python 3.10+
 - Node.js 18+
 - Google Maps API key
-- AWS credentials (optional, for S3 data access)
 
 ### Backend Setup
 
 ```bash
 # Navigate to project root
-cd hackbrown-2
+cd hackbrown
 
 # Install Python dependencies
 pip install -r requirements.txt
 
 # Set up environment variables (optional)
 # Create backend/.env with:
-# USE_AWS=true (if using S3)
-# AWS_ACCESS_KEY_ID=your_key
-# AWS_SECRET_ACCESS_KEY=your_secret
 # GOOGLE_PLACES_API_KEY=your_key
 # VISA_API_USER_ID=your_user_id
 # VISA_API_PASSWORD=your_password
 
 # Data files are loaded from:
-# - AWS S3 bucket (if USE_AWS=true)
-# - backend/agents/data/ (fallback)
+# - backend/agents/data/
 
 # Run Flask server
 python backend/http_server.py
-# Or use the entrypoint:
-python app.py
 ```
 
 The backend server will run on `http://localhost:8020` (or PORT from environment)
@@ -298,8 +280,6 @@ hackbrown-2/
 - **RentCast API** — Rent price estimates
 - **Visa Merchant Search API** — Merchant spending insights (sandbox)
 - **NYC Neighborhood GeoJSON** — Neighborhood boundaries and shapes
-- **AWS S3** — Scalable data storage with local fallback
-
 ---
 
 ## API Endpoints
@@ -336,75 +316,3 @@ Submit a location analysis request.
   "cached": false  // true if result came from demo cache
 }
 ```
-
-**Performance:**
-- Demo queries: <100ms (cached)
-- Real queries: 10-30 seconds (parallel processing)
-
-### GET /health
-Health check endpoint.
-
----
-
-## Implementation Highlights
-
-### Parallel Processing
-- Uses `ThreadPoolExecutor` to process multiple locations concurrently
-- 3-5x speedup compared to sequential processing
-- Handles up to 5 locations in parallel
-
-### Demo Query Caching
-- Pre-computed results for 3 common demo scenarios
-- Fuzzy matching for business types and demographics
-- 20% budget tolerance for flexible matching
-- Instant results with special UI feedback
-
-### Enhanced Loading Experience
-- Dynamic progress messages showing agent activity
-- "Vantage is analyzing 262 neighborhoods..." initial message
-- Progressive updates: Location Scout → Competitor Intel → Revenue Analyst
-- Minimum 10-second loading time for better UX perception
-
-### AWS S3 Integration
-- Data files stored in `vantage-location-data` S3 bucket
-- Automatic fallback to local files if S3 unavailable
-- Environment variable configuration for credentials
-
-### Visa API Integration
-- Merchant Search API v2 for spending insights
-- Optional enhancement to revenue projections
-- Graceful fallback to benchmarks if API unavailable
-
----
-
-## Why Vantage Wins
-
-| Dimension | Competitors | Vantage |
-|-----------|-------------|---------|
-| Cost | $10K–$50K/year | Accessible |
-| Transparency | Black box | Every number cited |
-| Interactivity | Static reports | Real-time analysis |
-| Speed | Weeks | 60 seconds (or instant for demos) |
-| Validation | "Trust us" | Confidence scores |
-| Visualization | Basic maps | Interactive heatmaps |
-| Performance | Sequential | Parallel processing |
-
----
-
-## The Pitch
-
-> "Site selection consulting costs $10,000 to $50,000. Enterprise tools are priced for chains, not first-time owners.
->
-> We built an AI agent system that does in 60 seconds what consultants charge $10K for — and it shows exactly where every number comes from.
->
-> With parallel processing, instant demo results, and transparent scoring, Vantage transforms location intelligence from a luxury to an accessible tool.
->
-> Vantage. Find Your Edge."
-
----
-
-## License
-
-This project was built for Hack@Brown 2026.
-
-

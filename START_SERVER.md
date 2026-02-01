@@ -79,17 +79,3 @@ When the server starts, you should see:
 2. You should see the SiteSelect login screen
 3. Enter any email/password to proceed (it's a demo)
 4. Click "Find Perfect Locations" to see the Premium Dashboard!
-
-## Features to Test
-
-✅ **Premium Dashboard** - Toggle between Classic and Premium views
-✅ **All Buttons** - Every button is clickable with console output
-✅ **Map Interactions** - Click markers, zoom in/out
-✅ **Location Selection** - Click location cards to see details
-✅ **Agent Workflow** - See multi-agent pipeline status
-✅ **What-If Analysis** - Adjust budget and demographics
-✅ **Voice Summary** - Click to hear location analysis
-
----
-
-**Happy Hacking! 🎉**
