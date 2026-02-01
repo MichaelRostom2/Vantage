@@ -1,10 +1,10 @@
-# Name
+# Vantage
 
-**The Zillow of Retail Site Selection**
+**Location Intelligence Platform**
 
-> AI-powered multi-agent platform that transforms "I want to open a business" into a complete location intelligence report — with market analysis, revenue projections, competitor gaps, and AI-generated storefront visualization — in 60 seconds.
+> AI-powered multi-agent platform that transforms "I want to open a business" into a complete location intelligence report — with market analysis, revenue projections, competitor gaps, and demographic heatmaps — in 60 seconds.
 
-🏆 **Built at Hack@Brown 2026** | Jan 31 – Feb 1
+**Built at Hack@Brown 2026** | Jan 31 – Feb 1
 
 ---
 
@@ -22,13 +22,13 @@ Site selection is the #1 factor in retail success, but:
 
 ## The Solution
 
-SiteSelect is a **5-agent system** deployed on Fetch.ai Agentverse that generates a complete **Business Opportunity Package**:
+Vantage is a **multi-agent system** that generates a complete **Business Opportunity Package**:
 
-- 📍 **Location Analysis** — Scored recommendations with confidence levels
-- 🎯 **Competitor Intelligence** — Live data from Google Places with gap analysis
-- 💰 **Revenue Projections** — Conservative/Expected/Optimistic scenarios
-- 🏪 **AI Storefront Mockup** — Generated visualization of your future business
-- 📋 **Business Toolkit** — Checklist, permits, lease intelligence
+- **Location Analysis** — Scored recommendations with confidence levels
+- **Competitor Intelligence** — Live data from Google Places with gap analysis
+- **Revenue Projections** — Conservative/Expected/Optimistic scenarios
+- **Demographic Heatmaps** — Population density, income, and age distribution overlays
+- **Business Toolkit** — Checklist, permits, lease intelligence
 
 ---
 
@@ -37,35 +37,45 @@ SiteSelect is a **5-agent system** deployed on Fetch.ai Agentverse that generate
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        USER INPUT                           │
-│  "Boba shop in NYC, targeting students, $5K rent budget"    │
+│  "Boba shop in NYC, targeting students, $8.5K rent budget"  │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│            AGENT 1: ORCHESTRATOR (Intent Parser)            │
-│  • Parses natural language → structured params              │
-│  • Dispatches to specialist agents in parallel              │
-│  • Handles "What If" re-runs                                │
+│            AGENT 1: ORCHESTRATOR                            │
+│  • Parses business requirements                             │
+│  • Dispatches to specialist agents                          │
+│  • Generates composite "magic number" score                │
 └─────────────────────────────────────────────────────────────┘
                               │
           ┌───────────────────┼───────────────────┐
           ▼                   ▼                   ▼
 ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
 │ AGENT 2:        │ │ AGENT 3:        │ │ AGENT 4:        │
-│ LOCATION SCOUT  │ │ COMPETITOR      │ │ MARKET          │
+│ LOCATION SCOUT  │ │ COMPETITOR      │ │ REVENUE         │
 │                 │ │ INTEL           │ │ ANALYST         │
-│ • City datasets │ │ • Google Places │ │ • Revenue calc  │
-│ • Score areas   │ │ • Ratings/hours │ │ • Break-even    │
+│ • NYC datasets  │ │ • Google Places │ │ • Revenue calc  │
+│ • Score areas   │ │ • Ratings/reviews│ │ • Break-even    │
 │ • Demographics  │ │ • Gap analysis  │ │ • Confidence    │
+│ • Transit data  │ │ • Saturation    │ │ • Projections   │
 └─────────────────┘ └─────────────────┘ └─────────────────┘
           │                   │                   │
           └───────────────────┼───────────────────┘
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│            AGENT 5: VISUALIZER + REPORT GENERATOR           │
-│  • AI storefront mockup (Stability AI)                      │
-│  • Assembles full Opportunity Report                        │
-│  • Confidence scores + data citations                       │
+│                    FLASK HTTP BRIDGE                        │
+│  • Aggregates agent responses                               │
+│  • Transforms data for frontend                             │
+│  • Serves location results with metrics                     │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│              REACT FRONTEND + GOOGLE MAPS                   │
+│  • Interactive map with heatmap overlays                   │
+│  • Location scoring dashboard                               │
+│  • PDF report generation                                    │
+│  • Real-time comparison view                                │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -80,36 +90,43 @@ SiteSelect is a **5-agent system** deployed on Fetch.ai Agentverse that generate
 
 | Layer | Technology |
 |-------|------------|
-| **Agent Framework** | Fetch.ai ADK + Agentverse |
-| **LLM** | Google Gemini API |
-| **Competitor Data** | Google Places API (live) |
-| **Image Generation** | Stability AI |
-| **Frontend** | Next.js 14 + Tailwind CSS + Framer Motion |
-| **Maps** | Mapbox GL JS |
-| **Voice Summary** | ElevenLabs API |
-| **Deployment** | Vercel |
+| **Agent Framework** | uagents (Python) |
+| **Backend API** | Flask + Flask-CORS |
+| **Data Processing** | Python (geopy, requests) |
+| **Frontend** | React 19 + TypeScript + Vite |
+| **Styling** | Tailwind CSS + Framer Motion |
+| **Maps** | Google Maps Platform + Deck.gl |
+| **Data Sources** | NYC Open Data, Census ACS, RentCast API |
+| **PDF Export** | html2pdf.js |
 
 ---
 
 ## Key Features
 
-### 🔍 Transparent Scoring
+### Transparent Scoring
 Every metric includes:
 - **Confidence score** (HIGH/MEDIUM/LOW)
-- **Data source citation** (Census ACS, Google Places, City Open Data)
+- **Data source citation** (Census ACS, Google Places, NYC Open Data)
 - **Assumptions disclosed**
 
-### 🔄 "What If" Analysis
-Change parameters and re-run analysis in real-time:
+### Interactive Map Visualization
+- Population density heatmaps
+- Median age distribution overlays
+- Median income distribution overlays
+- Location markers with scoring
+- Collapsible sidebars for layer control
+
+### Real-Time Analysis
+Change parameters and re-run analysis:
 - Adjust budget → New locations unlock
 - Change target demographic → Different neighborhoods score higher
-- True agentic behavior, not static lookup
+- Dynamic agent-based scoring
 
-### 📊 Multi-Layer Map Visualization
-- Population density heatmaps
-- Age/income distribution overlays
-- Competitor locations
-- Transit accessibility
+### Comprehensive Reports
+- PDF export with full location analysis
+- Revenue projections (Conservative/Moderate/Optimistic)
+- Competitor gap analysis
+- Demographic breakdowns
 
 ---
 
@@ -117,84 +134,175 @@ Change parameters and re-run analysis in real-time:
 
 ```
 ╔═══════════════════════════════════════════════════════════════╗
-║  SITESELECT OPPORTUNITY REPORT                                ║
+║  VANTAGE OPPORTUNITY REPORT                                   ║
 ╠═══════════════════════════════════════════════════════════════╣
-║  🏆 #1 RECOMMENDATION: CHELSEA / HIGH LINE                    ║
+║  #1 RECOMMENDATION: CHELSEA / HIGH LINE                       ║
 ║  Overall Score: 87/100 | Confidence: HIGH                     ║
 ║                                                               ║
-║  📊 SCORE BREAKDOWN                                           ║
+║  SCORE BREAKDOWN                                              ║
 ║  ├─ Foot Traffic:     92/100  (HIGH confidence)               ║
 ║  ├─ Target Demo:      88/100  (HIGH confidence)               ║
 ║  ├─ Transit Access:   85/100  (HIGH confidence)               ║
 ║  ├─ Competition Gap:  79/100  (MEDIUM confidence)             ║
 ║  └─ Rent Fit:         82/100  (MEDIUM confidence)             ║
 ║                                                               ║
-║  🎯 COMPETITOR INTELLIGENCE (Live Data)                       ║
-║  Found 3 competitors — Gap: No late-night option              ║
+║  COMPETITOR INTELLIGENCE (Live Data)                          ║
+║  Found 3 competitors — Gap: No late-night option               ║
 ║                                                               ║
-║  💰 REVENUE PROJECTION                                        ║
+║  REVENUE PROJECTION                                            ║
 ║  Conservative: $18,200/mo | Expected: $24,500/mo              ║
 ║  Break-even: 8 months                                         ║
 ║                                                               ║
-║  [AI Storefront Mockup] [Download PDF] [What If?]             ║
+║  [Download PDF] [Compare Locations] [View Map]                ║
 ╚═══════════════════════════════════════════════════════════════╝
 ```
 
 ---
 
-## Prize Tracks
-
-| Track | Prize | Fit |
-|-------|-------|-----|
-| **Fetch.ai Challenge** | $750 | ⭐⭐⭐⭐⭐ 5 agents on Agentverse |
-| **Marshall Wace** | $2,000 | ⭐⭐⭐⭐⭐ RAG + validation + confidence scores |
-| **Visa** | $600 | ⭐⭐⭐⭐ Enables trade and commerce |
-| **Best Use of Gemini** | Swag | ⭐⭐⭐⭐ LLM integration |
-| **Best Use of ElevenLabs** | Earbuds | ⭐⭐⭐ Voice summary |
-| **.Tech Domain** | Domain + Mic | ⭐⭐⭐⭐⭐ siteselect.tech |
-
----
-
 ## Local Development
 
+### Prerequisites
+- Python 3.10+
+- Node.js 18+
+- Google Maps API key
+
+### Backend Setup
+
 ```bash
-# Clone the repo
-git clone https://github.com/[team]/siteselect.git
-cd siteselect
+# Navigate to project root
+cd hackbrown-2
+
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Set up data directory (if needed)
+# Data files should be in backend/data/
+
+# Run Flask server
+python backend/http_server.py
+```
+
+The backend server will run on `http://localhost:8020`
+
+### Frontend Setup
+
+```bash
+# Navigate to frontend directory
+cd frontend/ui
 
 # Install dependencies
 npm install
 
 # Set up environment variables
-cp .env.example .env.local
-# Add: GEMINI_API_KEY, GOOGLE_PLACES_API_KEY, STABILITY_API_KEY, ELEVENLABS_API_KEY
+# Create .env.local with:
+# VITE_GOOGLE_MAPS_API_KEY=your_api_key_here
+# VITE_API_URL=http://localhost:8020
 
 # Run development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+The frontend will run on `http://localhost:5173` (or the next available port)
+
+### Full Stack Development
+
+1. Start the backend server in one terminal
+2. Start the frontend dev server in another terminal
+3. Open `http://localhost:5173` in your browser
+
+---
+
+## Project Structure
+
+```
+hackbrown-2/
+├── backend/
+│   ├── agents/
+│   │   ├── 0-Input.py          # Input handler
+│   │   ├── 1-orchestrator.py   # Main orchestrator agent
+│   │   ├── 2-location_scout.py # Location scoring agent
+│   │   ├── 3-competitor_intel.py # Competitor analysis agent
+│   │   ├── 4-revenue_analyst.py  # Revenue projection agent
+│   │   └── data/                # Agent data files
+│   ├── data/                    # Data files (GeoJSON, JSON)
+│   ├── data_service.py          # Data fetching service
+│   └── http_server.py           # Flask API bridge
+├── frontend/
+│   └── ui/
+│       ├── src/
+│       │   ├── app/
+│       │   │   ├── components/  # React components
+│       │   │   ├── contexts/     # React contexts
+│       │   │   └── App.tsx       # Main app component
+│       │   ├── services/         # API service
+│       │   └── utils/            # Utilities (PDF export)
+│       ├── public/
+│       │   └── data/             # Public data files
+│       └── package.json
+└── requirements.txt
+```
 
 ---
 
 ## Data Sources
 
-- **NYC Open Data** — Business licenses, foot traffic proxies
+- **NYC Open Data** — Business licenses, pedestrian counts, subway stations
 - **Google Places API** — Live competitor data (ratings, reviews, hours)
 - **Census ACS** — Demographics, income distribution
-- **Stability AI** — Storefront visualization generation
+- **RentCast API** — Rent price estimates
+- **NYC Neighborhood GeoJSON** — Neighborhood boundaries and shapes
 
 ---
 
-## Why We Win
+## API Endpoints
 
-| Dimension | Competitors | SiteSelect |
-|-----------|-------------|------------|
+### GET /submit
+Submit a location analysis request.
+
+**Query Parameters:**
+- `type` (string): Business type (e.g., "Boba Tea Shop")
+- `demo` (string): Target demographic (e.g., "Gen Z Students")
+- `budget` (number): Monthly rent budget
+
+**Response:**
+```json
+{
+  "status": "completed",
+  "progress": 100,
+  "agent_statuses": [...],
+  "locations": [
+    {
+      "id": 1,
+      "name": "Location Name",
+      "score": 87,
+      "status": "HIGH",
+      "metrics": [...],
+      "competitors": [...],
+      "revenue": [...],
+      "rent_price": 8500,
+      "address": "123 Main St",
+      "demographics": {...},
+      "magic_number": 87
+    }
+  ]
+}
+```
+
+### GET /health
+Health check endpoint.
+
+---
+
+## Why Vantage Wins
+
+| Dimension | Competitors | Vantage |
+|-----------|-------------|---------|
 | Cost | $10K–$50K/year | Accessible |
 | Transparency | Black box | Every number cited |
-| Interactivity | Static reports | "What If" re-runs |
+| Interactivity | Static reports | Real-time analysis |
 | Speed | Weeks | 60 seconds |
 | Validation | "Trust us" | Confidence scores |
+| Visualization | Basic maps | Interactive heatmaps |
 
 ---
 
@@ -204,8 +312,14 @@ Open [http://localhost:3000](http://localhost:3000)
 >
 > We built an AI agent system that does in 60 seconds what consultants charge $10K for — and it shows exactly where every number comes from.
 >
-> SiteSelect. The Zillow of retail site selection."
+> Vantage. Find Your Edge."
 
 ---
 
-**Built with ☕ at Hack@Brown 2026**
+## License
+
+This project was built for Hack@Brown 2026.
+
+---
+
+**Built with dedication at Hack@Brown 2026**
