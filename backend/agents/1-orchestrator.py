@@ -148,15 +148,16 @@ async def handle_score_response(ctx: Context, sender: str, msg: ScoreResponse):
         out.loc_result = msg
     elif not out.comp_result:
         out.comp_result = msg
-
-    # ask for revenue analyst for that business
-    msg = RevenueRequest(business_type=out.business_type,
-                       neighborhood=out.neighborhood,
-                       foot_traffic_score=out.loc_result.breakdown['foot_traffic']['count'],
-                       competition_count=out.comp_result.breakdown['competitor_count'],
-                       rent_estimate=out.rent_estimate)
-    ctx.logger.info(f"Sending message to revenue_analyst at {revenue_analyst_address}")
-    await ctx.send(revenue_analyst_address, msg)
+    
+    if out.loc_result and out.comp_result:
+        # ask for revenue analyst for that business
+        msg = RevenueRequest(business_type=out.business_type,
+                        neighborhood=out.neighborhood,
+                        foot_traffic_score=out.loc_result.breakdown['foot_traffic']['count'],
+                        competition_count=out.comp_result.breakdown['competitor_count'],
+                        rent_estimate=out.rent_estimate)
+        ctx.logger.info(f"Sending message to revenue_analyst at {revenue_analyst_address}")
+        await ctx.send(revenue_analyst_address, msg)
     
 
 @orchestrator.on_message(model=RevenueResponse)
