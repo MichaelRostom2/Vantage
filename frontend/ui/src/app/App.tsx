@@ -7,9 +7,9 @@ const MotionDiv = motion.div as any;
 const MotionSpan = motion.span as any;
 const MotionA = motion.a as any;
 
-import { 
+import {
   MapPin,
-  Search, 
+  Search,
   DollarSign,
   Users,
   ChevronDown,
@@ -49,7 +49,9 @@ import {
   Eye,
   EyeOff,
   Download,
-  ChevronRight
+  ChevronRight,
+  ImageIcon,
+  Ruler
 } from 'lucide-react';
 import { InputForm } from './components/InputForm';
 import { MapView } from './components/MapView';
@@ -75,12 +77,13 @@ import { AnalyticsDashboard } from './components/AnalyticsDashboard';
 import { ReportsTab } from './components/ReportsTab';
 import { SettingsTab } from './components/SettingsTab';
 import { useTheme } from './contexts/ThemeContext';
+import { useAI } from './hooks/useAI';
 import { Moon, Sun, LayoutDashboard, Plus } from 'lucide-react';
 import { LocationCardSkeleton } from './components/LoadingSkeleton';
 
 // Mock data - NYC/Manhattan locations
 const LOCATIONS = [
-  { id: 1, name: 'Chelsea Highline', score: 98, x: 35, y: 45, status: 'HIGH' as const, 
+  { id: 1, name: 'Chelsea Highline', score: 98, x: 35, y: 45, status: 'HIGH' as const,
     metrics: [
       { label: 'Elite Density', score: 98, confidence: 'HIGH' as const },
       { label: 'Net Disposable', score: 95, confidence: 'HIGH' as const },
@@ -140,7 +143,7 @@ const LOCATIONS = [
       { label: 'Rent Alpha', score: 75, confidence: 'MEDIUM' as const }
     ],
     competitors: [
-      { name: 'Café Gitane', rating: 4.6, reviews: 1923, distance: '0.2 mi', status: 'Open' as const, weakness: 'French bistro style' },
+      { name: 'Cafe Gitane', rating: 4.6, reviews: 1923, distance: '0.2 mi', status: 'Open' as const, weakness: 'French bistro style' },
       { name: 'Balthazar', rating: 4.4, reviews: 3456, distance: '0.4 mi', status: 'Open' as const, weakness: 'Upscale dining' }
     ],
     revenue: [
@@ -193,6 +196,11 @@ export default function Vantage() {
   const [checklistStates, setChecklistStates] = useState<Record<number, boolean[]>>({});
   const [savedReports, setSavedReports] = useState<Array<{ id: number; locationId: number; generatedAt: Date }>>([]);
   const { theme, toggleTheme } = useTheme();
+  const {
+    storefrontUrl, storefrontLoading, storefrontError, generateStorefront,
+    floorplanUrl, floorplanLoading, floorplanError, generateFloorplan,
+    resetPropertyAI,
+  } = useAI();
 
   // Generate report when analysis completes
   const generateReport = async (locationId: number) => {
@@ -218,28 +226,18 @@ export default function Vantage() {
         },
         generatedAt: new Date().toLocaleString()
       });
-      
+
       // Save report to history
       setSavedReports(prev => [...prev, {
         id: Date.now(),
         locationId: location.id,
         generatedAt: new Date()
       }]);
-      // Silent download - no toast
     } catch (error) {
       console.error('PDF export error:', error);
       alert('Failed to export PDF. Please try again.');
     }
   };
-
-  // Note: Removed auto-select to keep map visible without location card blocking it
-  // Users can click on locations to view details
-  // useEffect(() => {
-  //   if (appState === 'results' && !selectedLocation && LOCATIONS.length > 0) {
-  //     setSelectedLocation(LOCATIONS[0].id);
-  //     console.log('📍 Auto-selected first location:', LOCATIONS[0].name);
-  //   }
-  // }, [appState, selectedLocation]);
 
   // Dev shortcut: Press 'P' to jump directly to Premium Dashboard
   useEffect(() => {
@@ -247,7 +245,6 @@ export default function Vantage() {
       if (e.key === 'p' || e.key === 'P') {
         if (e.ctrlKey || e.metaKey) {
           e.preventDefault();
-          console.log('🚀 Dev shortcut: Jumping to Premium Dashboard');
           setAppState('results');
           setSelectedLocation(LOCATIONS[0]?.id || null);
           setActiveAgent(null);
@@ -276,7 +273,6 @@ export default function Vantage() {
     setLoadingProgress(0);
     setActiveAgent(AGENTS[0].id);
 
-    // Simulate progress for UI feedback
     const interval = setInterval(() => {
       setLoadingProgress(prev => {
         const newProgress = prev + 2;
@@ -296,24 +292,19 @@ export default function Vantage() {
     }, 60);
 
     try {
-      // Call the API service to submit analysis request
       const response = await apiService.submitAnalysis({
         business_type: 'Boba Tea Shop',
         target_demo: 'Gen Z Students',
         budget: 8500,
       });
 
-      // Wait for progress animation to complete
       setTimeout(() => {
         clearInterval(interval);
         setAppState('results');
         setActiveAgent(null);
-        // Update locations with real data if available
         if (response.locations && response.locations.length > 0) {
-          // Locations would be updated here if we had a state for them
           console.log('Received locations:', response.locations);
         }
-        // Show success toast
         const topLocation = LOCATIONS[0];
         toast.success('Analysis complete!', {
           description: `Found ${LOCATIONS.length} locations. ${topLocation.name} scored ${topLocation.score}/100 - Top pick`,
@@ -322,7 +313,6 @@ export default function Vantage() {
       }, 4000);
     } catch (error) {
       console.error('Analysis failed:', error);
-      // Still show results with mock data on error
       setTimeout(() => {
         clearInterval(interval);
         setAppState('results');
@@ -333,6 +323,7 @@ export default function Vantage() {
 
   const handleMarkerClick = (id: number) => {
     setSelectedLocation(id);
+    resetPropertyAI();
     if (!checklistStates[id]) {
       const location = LOCATIONS.find(l => l.id === id);
       if (location) {
@@ -363,7 +354,7 @@ export default function Vantage() {
   // Login Modal
   if (showLogin && !isAuthenticated) {
   return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 via-slate-50 to-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
         <SimpleBackground />
 
         {/* Login Card */}
@@ -375,27 +366,25 @@ export default function Vantage() {
           >
           <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-10 shadow-lg">
             <div className="text-center mb-10">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl mb-5 shadow-lg shadow-amber-500/30 border border-amber-400/50">
-                <MapPin className="w-8 h-8 text-white fill-current" />
-              </div>
+              <img src="/logo.png" alt="Vantage" className="w-16 h-16 rounded-xl mb-5 mx-auto shadow-lg" />
               <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-2">
                 VANTAGE
               </h1>
               <p className="text-slate-600 dark:text-slate-300 font-medium">Location Intelligence Platform</p>
               </div>
-              
+
             <form onSubmit={handleLogin} className="space-y-5">
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Email</label>
                 <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-amber-500 dark:group-focus-within:text-amber-400 transition-colors" />
-                  <input 
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-teal-500 dark:group-focus-within:text-teal-400 transition-colors" />
+                  <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
                     required
-                    className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
                   />
                   </div>
                 </div>
@@ -403,14 +392,14 @@ export default function Vantage() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Password</label>
                 <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-amber-500 dark:group-focus-within:text-amber-400 transition-colors" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-teal-500 dark:group-focus-within:text-teal-400 transition-colors" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     required
-                    className="w-full pl-12 pr-14 py-3 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                    className="w-full pl-12 pr-14 py-3 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
                   />
                   <button
                     type="button"
@@ -425,7 +414,7 @@ export default function Vantage() {
                 <MotionButton
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl font-semibold text-base shadow-sm hover:shadow-md hover:from-amber-600 hover:to-amber-700 transition-all"
+                className="w-full py-3 bg-gradient-to-r from-teal-500 to-emerald-600 text-white rounded-xl font-semibold text-base shadow-sm hover:shadow-md hover:from-teal-600 hover:to-emerald-700 transition-all"
                 onClick={(e) => {
                   e.preventDefault();
                   handleLogin(e);
@@ -435,7 +424,7 @@ export default function Vantage() {
                 </MotionButton>
 
               <div className="text-center pt-2">
-                <a href="#" className="text-sm text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 transition-colors font-medium hover:underline">
+                <a href="#" className="text-sm text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors font-medium hover:underline">
                   Forgot password?
                 </a>
                     </div>
@@ -448,19 +437,19 @@ export default function Vantage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-slate-50 to-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-slate-50 to-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex relative overflow-hidden">
       <SimpleBackground />
 
       {/* Fixed Icon Sidebar */}
       <aside className="fixed left-0 top-0 bottom-0 w-20 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col items-center py-8 z-50">
             <MotionDiv
-          className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-amber-500/30 mb-12 border border-amber-400/50"
+          className="w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden shadow-lg mb-12"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: 'spring', stiffness: 300 }}
               >
-          <MapPin className="w-6 h-6 fill-current" />
+          <img src="/logo.png" alt="Vantage" className="w-12 h-12 object-cover" />
               </MotionDiv>
-        
+
         <nav className="flex flex-col gap-8">
           {[
             { id: 'dashboard', icon: LayoutDashboard },
@@ -479,7 +468,7 @@ export default function Vantage() {
                 whileTap={{ scale: 0.9 }}
                 className={`p-3 rounded-xl transition-all relative group ${
                   isActive
-                    ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 shadow-sm' 
+                    ? 'bg-teal-100 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 shadow-sm'
                     : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'
                 }`}
               >
@@ -503,7 +492,7 @@ export default function Vantage() {
       </aside>
 
       {/* Main Content */}
-      <main className="ml-20 min-h-screen p-8 lg:p-12 bg-white dark:bg-slate-900">
+      <main className="ml-20 min-h-screen p-8 lg:p-12 bg-white dark:bg-slate-900 w-full">
         {/* Dashboard Header */}
         {activeTab === 'dashboard' && (
           <header className="flex justify-between items-end mb-12 animate-in fade-in duration-700">
@@ -515,8 +504,8 @@ export default function Vantage() {
                 {appState === 'initial' ? 'Welcome to Vantage' : 'Location Intelligence'}
               </h1>
               <p className="text-slate-600 dark:text-slate-300 font-medium mt-1 break-words">
-                {appState === 'initial' 
-                  ? 'Select your parameters to begin site evaluation' 
+                {appState === 'initial'
+                  ? 'Select your parameters to begin site evaluation'
                   : 'Advanced AI analysis for Boba Tea Shop expansion'}
               </p>
             </div>
@@ -534,7 +523,7 @@ export default function Vantage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setAppState('initial')}
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl font-bold text-sm hover:from-amber-600 hover:to-amber-700 transition-all shadow-xl shadow-amber-500/30"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-emerald-600 text-white rounded-xl font-bold text-sm hover:from-teal-600 hover:to-emerald-700 transition-all shadow-xl shadow-teal-500/30"
               >
                 <Plus className="w-4 h-4" />
                 New Analysis
@@ -599,11 +588,11 @@ export default function Vantage() {
                         {location.status}
               </div>
                     </div>
-                    <div className="text-4xl font-black text-amber-600 dark:text-amber-400 mb-2 break-words">{location.score}/100</div>
+                    <div className="text-4xl font-black text-teal-600 dark:text-teal-400 mb-2 break-words">{location.score}/100</div>
                     <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 break-words">Click to view detailed analysis</p>
             <MotionDiv
                       whileHover={{ x: 4 }}
-                      className="flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap"
+                      className="flex items-center gap-2 text-xs font-bold text-teal-600 dark:text-teal-400 whitespace-nowrap"
                     >
                       <span>View Details</span>
                       <ChevronRight className="w-4 h-4 flex-shrink-0" />
@@ -646,21 +635,21 @@ export default function Vantage() {
                     <LinearPipeline
                               agents={AGENTS.map((agent, idx) => ({
                                 name: agent.name,
-                                status: activeAgent === agent.id ? 'active' : 
+                                status: activeAgent === agent.id ? 'active' :
                                AGENTS.findIndex(a => a.id === activeAgent) > idx ? 'done' : 'pending',
                         time: activeAgent === agent.id ? 'Running...' : undefined
                       }))}
                     />
-                    
+
                     {appState === 'results' && (
-                      <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 dark:bg-slate-900 text-slate-900 dark:text-white p-8 rounded-3xl shadow-2xl relative overflow-hidden border border-amber-200 dark:border-slate-700">
+                      <div className="bg-gradient-to-br from-teal-50 to-emerald-100/50 dark:bg-slate-900 text-slate-900 dark:text-white p-8 rounded-3xl shadow-2xl relative overflow-hidden border border-teal-200 dark:border-slate-700">
                         <div className="relative z-10">
-                          <Sparkles className="w-8 h-8 text-amber-600 dark:text-amber-400 mb-4" />
+                          <Sparkles className="w-8 h-8 text-teal-600 dark:text-teal-400 mb-4" />
                           <h4 className="text-lg font-black mb-2">Vantage Score: {selectedLocationData?.score || 98}</h4>
                           <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
                             {selectedLocationData?.name || 'Chelsea Highline'} demonstrates elite potential with 95% foot traffic alignment for Boba Tea demographics.
                           </p>
-                          <button 
+                          <button
                             onClick={async () => {
                               if (selectedLocationData) {
                                 await generateReport(selectedLocationData.id);
@@ -668,13 +657,13 @@ export default function Vantage() {
                                 toast.error('Select a location first');
                               }
                             }}
-                            className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:from-amber-600 hover:to-amber-700 transition-all shadow-lg shadow-amber-500/20"
+                            className="w-full py-4 bg-gradient-to-r from-teal-500 to-emerald-600 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:from-teal-600 hover:to-emerald-700 transition-all shadow-lg shadow-teal-500/20"
                           >
                             <FileText className="w-4 h-4" />
                             Download Full Report
                                 </button>
                           </div>
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-400/10 to-amber-500/10 blur-3xl rounded-full translate-x-10 -translate-y-10" />
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-teal-400/10 to-emerald-500/10 blur-3xl rounded-full translate-x-10 -translate-y-10" />
                         </div>
                         )}
             </MotionDiv>
@@ -682,7 +671,7 @@ export default function Vantage() {
               </AnimatePresence>
                           </div>
 
-            {/* Right Column: Results / Visualization */}
+            {/* Right Column: Results / Visualization - Full Width */}
             <div className="col-span-12 lg:col-span-8 xl:col-span-9 space-y-6 lg:space-y-8">
               <AnimatePresence mode="wait">
                 {appState === 'initial' ? (
@@ -698,9 +687,9 @@ export default function Vantage() {
                       <MotionDiv
                         animate={{ y: [0, -10, 0] }}
                         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                        className="w-20 h-20 bg-amber-500/20 dark:bg-amber-500/10 backdrop-blur-xl rounded-3xl border border-amber-400/40 dark:border-amber-500/30 flex items-center justify-center mb-6 shadow-2xl"
+                        className="w-20 h-20 bg-teal-500/20 dark:bg-teal-500/10 backdrop-blur-xl rounded-3xl border border-teal-400/40 dark:border-teal-500/30 flex items-center justify-center mb-6 shadow-2xl"
                       >
-                        <MapPin className="w-10 h-10 text-amber-600 dark:text-amber-400 fill-current" />
+                        <img src="/logo.png" alt="Vantage" className="w-12 h-12 rounded-lg" />
                       </MotionDiv>
                       <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4 tracking-tighter uppercase">Enter the Vantage Point</h2>
                       <p className="text-slate-700 dark:text-slate-200 max-w-md mx-auto leading-relaxed">
@@ -709,7 +698,7 @@ export default function Vantage() {
                           </div>
                   </MotionDiv>
                 ) : appState === 'loading' ? (
-                  <MotionDiv 
+                  <MotionDiv
                     key="loading-view"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -727,37 +716,149 @@ export default function Vantage() {
                     key="results-view"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-                    className="space-y-8"
+                    className="space-y-6"
                   >
-                    {/* Map and Results Split */}
-                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                      <div className="xl:col-span-2" style={{ minHeight: '600px', height: '600px' }}>
-                            <MapView
-                              markers={LOCATIONS}
-                              onMarkerClick={handleMarkerClick}
-                              selectedId={selectedLocation}
-                            />
-                      </div>
-                      <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                        {LOCATIONS.map(loc => (
-                          <div
-                            key={loc.id}
-                            onClick={() => setSelectedLocation(loc.id)}
-                            className={`p-4 rounded-xl border cursor-pointer transition-all ${
-                              selectedLocation === loc.id
-                                ? 'bg-amber-100 dark:bg-amber-500/20 border-amber-500 shadow-lg'
-                                : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
-                            }`}
-                          >
-                            <div className="flex items-center justify-between mb-2 gap-2">
-                              <h3 className="font-black text-slate-900 dark:text-white truncate flex-1 min-w-0">{loc.name}</h3>
-                              <div className="text-2xl font-black text-amber-600 dark:text-amber-400 flex-shrink-0">{loc.score}</div>
+                    {/* Map - Full Width with popup detail sidebar built-in */}
+                    <div style={{ minHeight: '650px', height: '650px' }}>
+                      <MapView
+                        markers={LOCATIONS}
+                        onMarkerClick={handleMarkerClick}
+                        selectedId={selectedLocation}
+                      />
                     </div>
-                            <p className="text-sm text-slate-600 dark:text-slate-400 break-words">{loc.status} confidence</p>
-                  </div>
-                      ))}
-                    </div>
-                  </div>
+
+                    {/* Storefront Visualizer - always visible below the map */}
+                    <MotionDiv
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm"
+                    >
+                      {selectedLocationData ? (
+                        <>
+                          {/* Property info bar */}
+                          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex flex-wrap items-center gap-x-6 gap-y-2">
+                            <h3 className="text-base font-bold text-slate-900 dark:text-white">{selectedLocationData.name}</h3>
+                            <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+                              <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+                                <TrendingUp size={14} />Score: {selectedLocationData.score}/100
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <MapPin size={13} />{selectedLocationData.status} Confidence
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* 3-column grid: Revenue | Storefront | Floor Plan */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-slate-100 dark:bg-slate-700">
+                            {/* Revenue */}
+                            <div className="bg-white dark:bg-slate-800 p-5 space-y-3">
+                              <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <TrendingUp size={13} /> Revenue Estimate
+                              </h4>
+                              <div className="rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 px-4 py-3 space-y-1.5">
+                                <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                                  {selectedLocationData.revenue?.[1]?.monthly || '$42,200'}/mo
+                                </p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                  Confidence:{' '}
+                                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                                    {selectedLocationData.revenue?.[1]?.isRecommended ? 'high' : 'medium'}
+                                  </span>
+                                </p>
+                              </div>
+                              <div className="space-y-2">
+                                {selectedLocationData.revenue?.map((rev, idx) => (
+                                  <div key={idx} className={`flex items-center justify-between text-sm px-2 py-1.5 rounded-lg ${rev.isRecommended ? 'bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20' : ''}`}>
+                                    <span className="text-slate-500 dark:text-slate-400 text-xs">{rev.scenario}</span>
+                                    <div className="text-right">
+                                      <span className="font-bold text-slate-800 dark:text-white text-xs">{rev.monthly}/mo</span>
+                                      <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-2">{rev.annual}/yr</span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Storefront */}
+                            <div className="bg-white dark:bg-slate-800 p-5 space-y-3">
+                              <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <ImageIcon size={13} /> Storefront Mockup
+                              </h4>
+                              {storefrontUrl ? (
+                                <img src={storefrontUrl} alt="AI Storefront" className="w-full aspect-[4/3] rounded-lg object-cover" />
+                              ) : (
+                                <div className="w-full aspect-[4/3] rounded-lg bg-slate-50 dark:bg-slate-700 border border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center gap-2">
+                                  {storefrontLoading ? (
+                                    <>
+                                      <Loader2 size={28} className="text-sky-400 animate-spin" />
+                                      <span className="text-xs text-slate-400 dark:text-slate-500">Generating with DALL-E 3...</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Sparkles size={28} className="text-slate-300 dark:text-slate-500" />
+                                      <span className="text-xs text-slate-400 dark:text-slate-500">DALL-E generated storefront</span>
+                                      <span className="text-[10px] text-slate-300 dark:text-slate-600">Based on address &amp; property type</span>
+                                    </>
+                                  )}
+                                </div>
+                              )}
+                              {storefrontError && (
+                                <p className="text-xs text-red-500">{storefrontError}</p>
+                              )}
+                              <button
+                                onClick={() => generateStorefront(selectedLocationData.address || selectedLocationData.name, 'Boba Tea Shop')}
+                                disabled={storefrontLoading}
+                                className={`w-full flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-white cursor-pointer transition-colors ${storefrontLoading ? 'bg-sky-300 cursor-not-allowed' : 'bg-sky-500 hover:bg-sky-600'}`}
+                              >
+                                {storefrontLoading ? <Loader2 size={14} className="animate-spin" /> : <ImageIcon size={14} />}
+                                {storefrontLoading ? 'Generating...' : storefrontUrl ? 'Regenerate' : 'Visualize Storefront'}
+                              </button>
+                            </div>
+
+                            {/* Floor Plan */}
+                            <div className="bg-white dark:bg-slate-800 p-5 space-y-3">
+                              <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <Ruler size={13} /> Architectural Layout
+                              </h4>
+                              {floorplanUrl ? (
+                                <img src={floorplanUrl} alt="AI Floor Plan" className="w-full aspect-[4/3] rounded-lg object-cover" />
+                              ) : (
+                                <div className="w-full aspect-[4/3] rounded-lg bg-slate-50 dark:bg-slate-700 border border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center gap-2">
+                                  {floorplanLoading ? (
+                                    <>
+                                      <Loader2 size={28} className="text-emerald-400 animate-spin" />
+                                      <span className="text-xs text-slate-400 dark:text-slate-500">Generating with DALL-E 3...</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Ruler size={28} className="text-slate-300 dark:text-slate-500" />
+                                      <span className="text-xs text-slate-400 dark:text-slate-500">DALL-E generated floor plan</span>
+                                      <span className="text-[10px] text-slate-300 dark:text-slate-600">Based on sqft &amp; property type</span>
+                                    </>
+                                  )}
+                                </div>
+                              )}
+                              {floorplanError && (
+                                <p className="text-xs text-red-500">{floorplanError}</p>
+                              )}
+                              <button
+                                onClick={() => generateFloorplan(2000, 'Boba Tea Shop')}
+                                disabled={floorplanLoading}
+                                className={`w-full flex items-center justify-center gap-2 rounded-lg border border-emerald-600 px-4 py-2.5 text-sm font-medium text-white cursor-pointer transition-colors ${floorplanLoading ? 'bg-emerald-300 cursor-not-allowed' : 'bg-emerald-500 hover:bg-emerald-600'}`}
+                              >
+                                {floorplanLoading ? <Loader2 size={14} className="animate-spin" /> : <Ruler size={14} />}
+                                {floorplanLoading ? 'Generating...' : floorplanUrl ? 'Regenerate' : 'Generate Floor Plan'}
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="px-6 py-12 flex flex-col items-center justify-center text-center">
+                          <Building2 size={48} className="text-slate-200 dark:text-slate-600 mb-3" />
+                          <p className="text-sm text-slate-400 dark:text-slate-500">Select a property on the map to view AI visualizations</p>
+                        </div>
+                      )}
+                    </MotionDiv>
 
                     {/* Deep Analysis Tabs */}
                           {selectedLocationData && (
@@ -781,15 +882,15 @@ export default function Vantage() {
                               whileHover={{ y: -2 }}
                               whileTap={{ scale: 0.95 }}
                               className={`flex items-center gap-2 px-5 py-4 text-sm font-bold transition-all relative whitespace-nowrap flex-shrink-0 ${
-                                detailTab === tab.id 
-                                  ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10' 
+                                detailTab === tab.id
+                                  ? 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10'
                                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                               }`}
                             >
                               <tab.icon className="w-4 h-4 flex-shrink-0" />
                               <span className="truncate max-w-[120px]">{tab.label}</span>
                               {detailTab === tab.id && (
-                                <MotionDiv layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-1 bg-amber-500 rounded-t-full" />
+                                <MotionDiv layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-1 bg-teal-500 rounded-t-full" />
                               )}
                             </MotionButton>
                           ))}
@@ -821,17 +922,17 @@ export default function Vantage() {
                           </div>
                         </div>
                       </div>
-                                <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 dark:bg-amber-500/10 p-6 rounded-2xl border border-amber-200 dark:border-amber-500/30">
-                                  <h4 className="text-sm font-black text-amber-700 dark:text-amber-400 mb-4 uppercase tracking-widest break-words">Growth Forecast</h4>
+                                <div className="bg-gradient-to-br from-teal-50 to-emerald-100/50 dark:bg-teal-500/10 p-6 rounded-2xl border border-teal-200 dark:border-teal-500/30">
+                                  <h4 className="text-sm font-black text-teal-700 dark:text-teal-400 mb-4 uppercase tracking-widest break-words">Growth Forecast</h4>
                                   <div className="space-y-4">
                                     <div className="flex justify-between items-end h-32 gap-1">
-                                      <div className="w-4 h-[20%] bg-amber-400 dark:bg-amber-500/30 rounded-t-sm flex-shrink-0" />
-                                      <div className="w-4 h-[40%] bg-amber-500 dark:bg-amber-500/50 rounded-t-sm flex-shrink-0" />
-                                      <div className="w-4 h-[60%] bg-amber-600 dark:bg-amber-500/70 rounded-t-sm flex-shrink-0" />
-                                      <MotionDiv initial={{ height: 0 }} animate={{ height: '80%' }} className="w-4 bg-amber-600 dark:bg-amber-500 rounded-t-sm flex-shrink-0" />
-                                      <div className="w-4 h-[95%] bg-amber-700 dark:bg-amber-600 rounded-t-sm flex-shrink-0" />
+                                      <div className="w-4 h-[20%] bg-teal-400 dark:bg-teal-500/30 rounded-t-sm flex-shrink-0" />
+                                      <div className="w-4 h-[40%] bg-teal-500 dark:bg-teal-500/50 rounded-t-sm flex-shrink-0" />
+                                      <div className="w-4 h-[60%] bg-emerald-500 dark:bg-emerald-500/70 rounded-t-sm flex-shrink-0" />
+                                      <MotionDiv initial={{ height: 0 }} animate={{ height: '80%' }} className="w-4 bg-emerald-600 dark:bg-emerald-500 rounded-t-sm flex-shrink-0" />
+                                      <div className="w-4 h-[95%] bg-emerald-700 dark:bg-emerald-600 rounded-t-sm flex-shrink-0" />
                       </div>
-                                    <div className="text-center text-[10px] font-bold text-amber-700/70 dark:text-amber-400/70 uppercase break-words">Projected 5yr Revenue</div>
+                                    <div className="text-center text-[10px] font-bold text-teal-700/70 dark:text-teal-400/70 uppercase break-words">Projected 5yr Revenue</div>
                     </div>
                   </div>
                     </MotionDiv>
@@ -844,7 +945,7 @@ export default function Vantage() {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
                               >
-                                <DemographicsTab 
+                                <DemographicsTab
                                   locationName={selectedLocationData.name}
                                   demographics={(selectedLocationData as any).demographics}
                                 />
@@ -863,14 +964,14 @@ export default function Vantage() {
             )}
 
                             {detailTab === 'financials' && (
-                    <MotionDiv 
+                    <MotionDiv
                                 key="financials"
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
                               >
-                                <FinancialsTab 
-                                  locationName={selectedLocationData.name} 
+                                <FinancialsTab
+                                  locationName={selectedLocationData.name}
                                   baseRevenue={selectedLocationData.revenue?.[1]?.monthly || '$42,200'}
                                   visaData={{
                                     dataSource: (selectedLocationData as any).dataSource || 'Industry-standard benchmarks',

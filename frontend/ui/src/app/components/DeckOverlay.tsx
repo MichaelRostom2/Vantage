@@ -187,7 +187,7 @@ export default function DeckOverlay({
             },
             pickable: true,
             autoHighlight: true,
-            highlightColor: [245, 158, 11, 150],
+            highlightColor: [20, 184, 166, 150],
             onHover: (info: any) => {
               if (onHoverNeighborhood && info.object) {
                 onHoverNeighborhood(info.object.properties ?? null);
@@ -232,7 +232,7 @@ export default function DeckOverlay({
           getPosition: (d: { lat: number; lng: number }) => [d.lng, d.lat],
           getFillColor: (d: { id: number; status: string }) => {
             if (d.id === selectedLocationId) {
-              return [245, 158, 11, 255]; // Amber for selected
+              return [20, 184, 166, 255]; // Teal for selected
             }
             switch (d.status) {
               case 'HIGH':
