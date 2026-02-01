@@ -2,9 +2,9 @@ import { useEffect, useRef } from 'react';
 import { APIProvider, Map as GoogleMap, useMap } from '@vis.gl/react-google-maps';
 import DeckOverlay from './DeckOverlay';
 import type { LocationResult } from '../../services/api';
-import { GOOGLE_MAPS_API_KEY } from '../config/keys';
 
 const NYC_CENTER = { lat: 40.7128, lng: -74.006 };
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 const GMAP_MAP_ID = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || '';
 const PLACEHOLDER_API_KEY = 'PASTE_YOUR_GOOGLE_MAPS_API_KEY_HERE';
 
@@ -140,7 +140,7 @@ export default function GoogleMapView({
     return (
       <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
         <p className="text-slate-500 dark:text-slate-400 text-sm">
-          Google Maps API key not configured. Add your key in app/config/keys.ts
+          Google Maps API key not configured. Add VITE_GOOGLE_MAPS_API_KEY to .env.local
         </p>
       </div>
     );
