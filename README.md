@@ -7,11 +7,10 @@
 
 **Built by TEAM CMYK:** Candy Xie, Karen Yang, Michael Rostom, Yolanda Hu 
 
+**NOTICE:** This project was developed with significant assistance from AI tools. Please be aware that the code may contain security vulnerabilities or unexpected errors.
+
 ![Vantage Platform Screenshot on startup](Assets/Screenshot1.png)
 ![Vantage Platform Screenshot after selection](Assets/Screenshot2.png)
-
->**Note:** This project was developed with significant assistance from AI tools. Please be aware that the code may contain security vulnerabilities or unexpected errors.
----
 
 
 ## The Problem
@@ -24,7 +23,6 @@ Site selection is the #1 factor in retail success, but:
 
 **Market Size:** Location Intelligence is a **$19B market** growing 15% annually. Site selection alone is **$6B+**.
 
----
 
 ## The Solution
 
@@ -174,24 +172,25 @@ Submit a location analysis request.
 **Response:**
 ```json
 {
-  "status": "completed",
-  "progress": 100,
-  "agent_statuses": [...],
-  "locations": [
+  "status": "ok",
+  "results": [
     {
-      "id": 1,
-      "name": "Location Name",
-      "score": 87,
-      "status": "HIGH",
+      "request": {
+        "business_type": "Boba Tea Shop",
+        "target_demo": "students",
+        "rent_estimate": 8500
+      },
+      "overall_score": 87,
+      "location": {
+        "name": "Location Name",
+        "address": "123 Main St",
+        "coordinates": {...}
+      },
       "metrics": [...],
       "competitors": [...],
-      "revenue": [...],
-      "rent_price": 8500,
-      "address": "123 Main St",
-      "demographics": {...},
-      "magic_number": 87
+      "revenue": [...]
     }
   ],
-  "cached": false  // true if result came from demo cache
+  "total_count": 1,
 }
 ```

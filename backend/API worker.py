@@ -201,8 +201,11 @@ def generate_ai_insights(location_data: Dict[str, Any]) -> List[Dict[str, Any]]:
 	"""
 	Generate AI insights using Google Gemini API
 	"""
-	# Replace YOUR_GEMINI_API_KEY_HERE with your actual Gemini API key
-	gemini_api_key = "AIzaSyB9a__9evbglKws4nVo6-BZmtkbNLwyDPo"
+	gemini_api_key = os.getenv("GEMINI_API_KEY")
+	if not gemini_api_key:
+		print("⚠️  GEMINI_API_KEY not set. AI insights unavailable.")
+		return []
+	
 	try:
 		from google import genai
 		from google.genai import Client
