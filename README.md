@@ -1,6 +1,6 @@
 **Hack@Brown 2026** | Jan 31 – Feb 1
 
-**Built by TEAM CMYK:** Candy Xie, Karen Yang, Michael Rostom, Yolanda Hu 
+**Built by TEAM CMYK:** Candy Xie, Michael Rostom, Yolanda Hu, Karen Yang
 
 **NOTICE:** This project was developed with significant assistance from AI tools. Please be aware that the code may contain security vulnerabilities or unexpected errors.
 
