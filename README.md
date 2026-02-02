@@ -195,3 +195,10 @@ Submit a location analysis request.
   "total_count": 1,
 }
 ```
+
+## Database Sources & Copyright
+- Bi-Annual_Pedestrian_Counts.geojson: NYC Open Data 
+- business_licenses.json: NYC Open Data
+- Demographics.json: NYU Furman Center’s CoreData.nyc
+- Storefronts_Vacant_or_Not.geojson: NYC Open Data
+- subway_stations.json: NYC Open Data
