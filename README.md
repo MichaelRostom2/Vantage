@@ -7,7 +7,7 @@
 # Vantage
 **Location Intelligence Platform**
 
-> AI-powered multi-agent platform that transforms "I want to open a business" into a complete location intelligence report — with market analysis, revenue projections, competitor gaps, and demographic heatmaps — in 60 seconds.
+> AI-powered multi-agent platform that transforms "I want to open a business" into a complete location intelligence report — with market analysis, revenue projections, competitor gaps, and demographic heatmaps.
 
 ![Vantage Platform Screenshot on startup](Assets/Screenshot1.png)
 ![Vantage Platform Screenshot after selection](Assets/Screenshot2.png)
@@ -18,44 +18,17 @@ https://github.com/user-attachments/assets/4aa8301a-d626-44f2-b73c-1be58b82d15d
 ## The Problem
 
 Site selection is the #1 factor in retail success, but:
-- Enterprise tools cost **$10K–$50K+/year**
+- Enterprise tools cost $10K–$50K+/year
 - Small business owners are priced out
-- **70% of consumers** say location influences their decision to visit
+- 70% of consumers say location influences their decision to visit
 - Wrong location = business death
 
-**Market Size:** Location Intelligence is a **$19B market** growing 15% annually. Site selection alone is **$6B+**.
-
 ## The Solution
-
-Vantage is a **multi-agent system** that generates a complete **Business Opportunity Package**:
-
+Vantage is a multi-agent system that finds the best location using
 - **Location Analysis** — Scored recommendations with confidence levels
 - **Competitor Intelligence** — Live data from Google Places with gap analysis
 - **Revenue Projections** — Conservative/Expected/Optimistic scenarios
 - **Demographic Heatmaps** — Population density, income, and age distribution overlays
-- **Enhanced Loading Experience** — Real-time progress messages showing agent activity
-
-## Key Features
-
-### Transparent Scoring
-Every metric includes:
-- **Confidence score** (HIGH/MEDIUM/LOW)
-- **Data source citation** (Census ACS, Google Places, NYC Open Data, Visa API)
-
-### Interactive Map Visualization
-- Population density heatmaps
-- Median age distribution overlays
-- Median income distribution overlays
-- Location markers with scoring
-- Collapsible sidebars for layer control
-
-### Comprehensive Reports
-- PDF export with full location analysis
-- Revenue projections (Conservative/Moderate/Optimistic)
-- Competitor gap analysis
-- Demographic breakdowns
-
-
 ## Architecture
 
 ```
@@ -121,16 +94,20 @@ Every metric includes:
 ║  [Download PDF] [Compare Locations] [View Map]                ║
 ╚═══════════════════════════════════════════════════════════════╝
 ```
+## Data Sources
+### APIs
+- **Google Places API** — Live competitor data (ratings, reviews, hours)
+- **RentCast API** — Rent price estimates
+- **Visa Merchant Search API** — Merchant spending insights (sandbox)
 
----
+### Databases
+- **Bi-Annual_Pedestrian_Counts**: NYC Open Data 
+- **Business_licenses**: NYC Open Data
+- **Demographics**: NYU Furman Center’s CoreData.nyc
+- **Storefronts_Vacant_or_Not**: NYC Open Data
+- **Subway_stations**: NYC Open Data
 
 ## Local Development
-
-### Prerequisites
-- Python 3.10+
-- Node.js 18+
-- Google Maps API key
-
 ### Backend
 
 ```bash
@@ -149,16 +126,17 @@ npm run dev
 
 The frontend will run on `http://localhost:5173` 
 
----
+## API Keys Required
+### Frontend
+- VITE_GOOGLE_MAPS_API_KEY. Turn on Maps JavaScript API,  Maps Embed API, Street View Static API
+- VITE_RENTCAST_API_KEY
+- VITE_OPENAI_API_KEY
 
-## Data Sources
-
-- **NYC Open Data** — Business licenses, pedestrian counts, subway stations
-- **Google Places API** — Live competitor data (ratings, reviews, hours)
-- **RentCast API** — Rent price estimates
-- **Visa Merchant Search API** — Merchant spending insights (sandbox)
-- **NYC Neighborhood GeoJSON** — Neighborhood boundaries and shapes
----
+### Backend
+- GEMINI_API_KEY
+- GOOGLE_PLACES_API_KEY
+- NYC_TOKEN
+- RENTCAST_KEY
 
 ## API Endpoints
 
@@ -195,10 +173,3 @@ Submit a location analysis request.
   "total_count": 1,
 }
 ```
-
-## Database Sources & Copyright
-- Bi-Annual_Pedestrian_Counts.geojson: NYC Open Data 
-- business_licenses.json: NYC Open Data
-- Demographics.json: NYU Furman Center’s CoreData.nyc
-- Storefronts_Vacant_or_Not.geojson: NYC Open Data
-- subway_stations.json: NYC Open Data

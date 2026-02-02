@@ -1,7 +1,6 @@
 frontend/dist
 frontend/node_modules
 frontend/package-lock.json
-frontend/package.json
 package-lock.json
 frontend/.env.local
 

@@ -4,51 +4,21 @@ import os
 from math import radians, cos, sin, asin, sqrt
 from pathlib import Path
 
-# Try to use AWS S3 data service, fallback to local files
-try:
-    import sys
-    backend_dir = Path(__file__).parent.parent
-    sys.path.insert(0, str(backend_dir))
-    from aws_data_service import AWSDataService
-    data_service = AWSDataService()
-    USE_AWS_DATA = data_service.use_aws
-except Exception as e:
-    print(f"⚠️  AWS data service not available: {e}. Using local files.")
-    USE_AWS_DATA = False
-    data_service = None
+data_service = None
 
-# Load data from S3 or local files
 subway_data = []
 pedestrian_data = None
 
-if USE_AWS_DATA and data_service:
-    try:
-        subway_data = data_service.get_subway_stations() or []
-        # Get GeoJSON pedestrian data
-        pedestrian_data = data_service.get_pedestrian_counts_geojson()
-        # Ensure it's in GeoJSON format
-        if not pedestrian_data or not isinstance(pedestrian_data, dict):
-            pedestrian_data = {"features": []}
-        elif 'features' not in pedestrian_data:
-            pedestrian_data = {"features": []}
-        print("✅ Loaded data from AWS S3")
-    except Exception as e:
-        print(f"⚠️  Error loading from S3: {e}. Falling back to local files.")
-        USE_AWS_DATA = False
-
-if not USE_AWS_DATA:
-    # Fallback to local files
-    data_dir = Path(__file__).parent / "data"
-    try:
-        with open(data_dir / "subway_stations.json") as f:
-            subway_data = json.load(f)
-        with open(data_dir / "Bi-Annual_Pedestrian_Counts.geojson") as f:
-            pedestrian_data = json.load(f)
-        print("✅ Loaded data from local files")
-    except Exception as e:
-        print(f"⚠️  Error loading local data: {e}")
-        subway_data = []
-        pedestrian_data = {"features": []}
+data_dir = Path(__file__).parent / "data"
+try:
+    with open(data_dir / "subway_stations.json") as f:
+        subway_data = json.load(f)
+    with open(data_dir / "Bi-Annual_Pedestrian_Counts.geojson") as f:
+        pedestrian_data = json.load(f)
+except Exception as e:
+    print(f"️Error loading local data: {e}")
+    subway_data = []
+    pedestrian_data = {"features": []}
 
 # Agent configuration - supports Agentverse deployment
 AGENT_ENDPOINT = os.getenv("LOCATION_SCOUT_ENDPOINT", "http://localhost:8001/submit")
@@ -291,8 +261,6 @@ def calculate_location_score(neighborhood, business_type, target_demo, latitude,
     # Component scores (each 0-100)
     foot_traffic_result = calculate_foot_traffic(latitude, longitude)  # 40% weight
     transit_result = calculate_transit_access(latitude, longitude)     # 60% weight
-    # demo_match = calculate_demo_match(neighborhood, target_demo)      # Future
-    # TODO: implement this 
     
     # Calculate weighted total with current factors
     total = (
