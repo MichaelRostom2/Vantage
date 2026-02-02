@@ -11,7 +11,7 @@
 
 ![Vantage Platform Screenshot on startup](Assets/Screenshot1.png)
 ![Vantage Platform Screenshot after selection](Assets/Screenshot2.png)
-![Vantage Platform video of ui flow](Assets/vantage.mp4)
+[▶ Watch the demo](Assets/vantage.mp4)
 
 ## The Problem
 
