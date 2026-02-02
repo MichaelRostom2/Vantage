@@ -11,7 +11,11 @@
 
 ![Vantage Platform Screenshot on startup](Assets/Screenshot1.png)
 ![Vantage Platform Screenshot after selection](Assets/Screenshot2.png)
-https://github.com/user-attachments/assets/f4bdd375-0dee-4d7e-9569-45a77f79346b
+
+
+https://github.com/user-attachments/assets/4aa8301a-d626-44f2-b73c-1be58b82d15d
+
+
 
 
 ## The Problem
