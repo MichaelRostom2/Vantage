@@ -11,7 +11,7 @@
 
 ![Vantage Platform Screenshot on startup](Assets/Screenshot1.png)
 ![Vantage Platform Screenshot after selection](Assets/Screenshot2.png)
-https://github.com/user-attachments/assets/8c1a4e8b-309b-48eb-b9f8-0980fe54c242
+![Vantage Platform video of ui flow](Assets/vantage.mp4)
 
 ## The Problem
 
