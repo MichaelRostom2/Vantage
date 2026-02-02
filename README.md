@@ -11,7 +11,6 @@
 
 ![Vantage Platform Screenshot on startup](Assets/Screenshot1.png)
 ![Vantage Platform Screenshot after selection](Assets/Screenshot2.png)
-![Vantage Platform Screenshot after selection](Assets/vantage.mov)
 
 ## The Problem
 
