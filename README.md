@@ -1,20 +1,18 @@
+**Hack@Brown 2026** | Jan 31 – Feb 1
+
+**Built by TEAM CMYK:** Candy Xie, Karen Yang, Michael Rostom, Yolanda Hu 
+
+**NOTICE:** This project was developed with significant assistance from AI tools. Please be aware that the code may contain security vulnerabilities or unexpected errors.
+
 # Vantage
 **Location Intelligence Platform**
 
 > AI-powered multi-agent platform that transforms "I want to open a business" into a complete location intelligence report — with market analysis, revenue projections, competitor gaps, and demographic heatmaps — in 60 seconds.
 
-**Hack@Brown 2026** | Jan 31 – Feb 1
-
-**Built by TEAM CMYK:** Candy Xie, Karen Yang, Michael Rostom, Yolanda Hu 
-
 ![Vantage Platform Screenshot on startup](Assets/Screenshot1.png)
-
-
-
+![Vantage Platform Screenshot after selection](Assets/Screenshot2.png)
 
 https://github.com/user-attachments/assets/4aa8301a-d626-44f2-b73c-1be58b82d15d
-
-
 
 
 ## The Problem
@@ -27,7 +25,6 @@ Site selection is the #1 factor in retail success, but:
 
 **Market Size:** Location Intelligence is a **$19B market** growing 15% annually. Site selection alone is **$6B+**.
 
-![Vantage Platform Screenshot after selection](Assets/Screenshot2.png)
 ## The Solution
 
 Vantage is a **multi-agent system** that generates a complete **Business Opportunity Package**:
@@ -198,5 +195,3 @@ Submit a location analysis request.
   "total_count": 1,
 }
 ```
-**NOTICE:** This project was developed with significant assistance from AI tools. Please be aware that the code may contain security vulnerabilities or unexpected errors.
-
